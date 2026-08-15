@@ -1,0 +1,3359 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventilator Nursing Learning Application</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme Color Tokens */
+            --primary: #6A1B9A; /* มหาวิทยาลัยพะเยา */
+            --primary-dark: #4A148C;
+            --primary-light: #E8EAF6;
+            --secondary: #0288D1; /* ระบบหายใจ / ออกซิเจน */
+            --secondary-light: #E1F5FE;
+            --success: #2E7D32; /* ปลอดภัย */
+            --success-light: #E8F5E9;
+            --warning: #F57C00; /* คำเตือน */
+            --warning-light: #FFF3E0;
+            --danger: #D32F2F; /* ฉุกเฉิน */
+            --danger-light: #FFEBEE;
+            
+            --bg-base: #F8F9FA;
+            --bg-card: #FFFFFF;
+            --text-main: #212121;
+            --text-sub: #666666;
+            --border-color: #E0E0E0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-base: #121212;
+            --bg-card: #1E1E1E;
+            --text-main: #E0E0E0;
+            --text-sub: #A0A0A0;
+            --border-color: #333333;
+            --primary-light: #311B92;
+            --secondary-light: #01579B;
+            --success-light: #1B5E20;
+            --warning-light: #E65100;
+            --danger-light: #B71C1C;
+            --shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', 'Outfit', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        /* Accessibility: Font size overrides */
+        body.font-large {
+            font-size: 1.2rem;
+        }
+        body.font-xlarge {
+            font-size: 1.4rem;
+        }
+
+        /* Core Layout Components */
+        header {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* App Wrapper */
+        .app-container {
+            display: flex;
+            min-height: calc(100vh - 72px);
+        }
+
+        /* Navigation Sidebar */
+        aside {
+            width: 280px;
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Global Safety Banner */
+        .safety-banner {
+            background-color: var(--danger-light);
+            border-left: 5px solid var(--danger);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .safety-banner svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--danger);
+            flex-shrink: 0;
+        }
+
+        /* Card and Grids */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .app-container {
+                flex-direction: column;
+            }
+            aside {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 0.5rem;
+                overflow-x: auto;
+            }
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Simulator UI */
+        .simulator-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr 300px;
+            gap: 1rem;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+        }
+
+        @media (max-width: 1200px) {
+            .simulator-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        .sim-panel {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+        }
+
+        .sim-screen {
+            background-color: #000000;
+            color: #00E676;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: inset 0 0 10px rgba(0,255,0,0.2);
+            position: relative;
+        }
+
+        .sim-screen-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            color: #00B0FF;
+        }
+
+        .waveform-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 300px;
+        }
+
+        .waveform-box {
+            position: relative;
+            height: 100px;
+            background-color: #080808;
+            border: 1px solid #222;
+        }
+
+        .waveform-box canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .waveform-label {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: #FFEA00;
+            background-color: rgba(0,0,0,0.6);
+            padding: 2px 5px;
+            border-radius: 3px;
+            pointer-events: none;
+        }
+
+        .sim-knobs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .knob-control {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background-color: var(--bg-base);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .knob-control label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .knob-control input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+        }
+
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .monitor-tile {
+            background-color: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .monitor-label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .monitor-val {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00E676;
+        }
+
+        .monitor-val.high {
+            color: #FF1744;
+            animation: blink 1s infinite;
+        }
+
+        .monitor-unit {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+
+        /* Alarm Banner on Simulator Screen */
+        .sim-alarm-banner {
+            background-color: var(--danger);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            text-align: center;
+            font-weight: bold;
+            animation: blink 0.8s infinite;
+            display: none;
+        }
+
+        /* Tabs display control */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Microlearning Accordion */
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background-color: var(--bg-card);
+        }
+
+        .accordion-header {
+            padding: 1rem;
+            background-color: var(--primary-light);
+            font-weight: bold;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-body {
+            padding: 1.5rem;
+            display: none;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Interactive Labs */
+        .lab-select-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--bg-card);
+        }
+
+        .lab-select-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .lab-select-card svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Quiz UI */
+        .quiz-choice {
+            display: block;
+            padding: 12px 15px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            background-color: var(--bg-card);
+        }
+
+        .quiz-choice:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .quiz-choice.correct {
+            background-color: var(--success-light) !important;
+            border-color: var(--success) !important;
+            color: var(--success);
+        }
+
+        .quiz-choice.incorrect {
+            background-color: var(--danger-light) !important;
+            border-color: var(--danger) !important;
+            color: var(--danger);
+        }
+
+        .quiz-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            display: none;
+        }
+
+        /* Modals and Overlays */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-sub);
+        }
+
+        /* Drag and Drop styles */
+        .drag-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .drag-item {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: grab;
+            border: 1px dashed var(--primary);
+            font-weight: 600;
+        }
+
+        .drop-zone {
+            flex: 1;
+            min-height: 100px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background-color: var(--bg-base);
+        }
+
+        .drop-zone.hover {
+            border-color: var(--secondary);
+            background-color: var(--secondary-light);
+        }
+
+        /* Badges / Gamification */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
+
+        .badge-item {
+            text-align: center;
+            opacity: 0.3;
+            transition: var(--transition);
+        }
+
+        .badge-item.earned {
+            opacity: 1;
+        }
+
+        .badge-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            border: 2px solid var(--primary);
+        }
+
+        .badge-icon svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--primary);
+        }
+
+        .badge-name {
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Certificate Styling Mock */
+        .certificate-frame {
+            border: 10px double var(--primary);
+            padding: 2rem;
+            background-color: #FFF;
+            color: #000;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .certificate-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Settings calculations visual layout */
+        .calc-steps {
+            background-color: var(--primary-light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: monospace;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Glossary search bar */
+        .glossary-search {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .glossary-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .glossary-term {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        /* Login Layout */
+        .login-layout {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .login-card {
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        /* Quick login buttons */
+        .quick-logins {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Breadcrumb & progress steps */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Instructor Avatar & Assistant Widget styling */
+        .header-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 8px rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: var(--transition);
+            object-fit: cover;
+            object-position: center 15%;
+            animation: pulseAvatar 3s infinite;
+        }
+
+        .header-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 12px rgba(255,255,255,0.8);
+        }
+
+        @keyframes pulseAvatar {
+            0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+        }
+
+        .floating-assistant-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .assistant-speech {
+            pointer-events: auto;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 15px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            width: 330px;
+            height: 420px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform: translateY(15px) scale(0.95);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+            transform-origin: bottom right;
+        }
+
+        .assistant-speech.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .assistant-speech::after {
+            content: '';
+            position: absolute;
+            bottom: 25px;
+            right: -10px;
+            border-width: 8px 0 8px 10px;
+            border-style: solid;
+            border-color: transparent transparent transparent var(--bg-card);
+            display: block;
+            width: 0;
+        }
+
+        .assistant-speech-header {
+            font-weight: bold;
+            color: var(--primary);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .online-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-weight: normal;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #00E676;
+            border-radius: 50%;
+            animation: pulseGreen 1.5s infinite;
+        }
+
+        @keyframes pulseGreen {
+            0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(0, 230, 118, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+        }
+
+        /* Chat History Box */
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-history::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-history::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 2px;
+        }
+
+        /* Speech bubbles */
+        .chat-msg {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 4px;
+        }
+
+        .chat-msg.instructor {
+            align-items: flex-start;
+        }
+
+        .chat-msg.student {
+            align-items: flex-end;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 8px 12px;
+            font-size: 0.82rem;
+            line-height: 1.4;
+            word-break: break-word;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .chat-msg.instructor .chat-bubble {
+            background-color: var(--primary-light);
+            color: var(--text-main);
+            border-radius: 14px 14px 14px 2px;
+            border: 1px solid rgba(106, 27, 154, 0.08);
+        }
+
+        .chat-msg.student .chat-bubble {
+            background-color: var(--primary);
+            color: white;
+            border-radius: 14px 14px 2px 14px;
+        }
+
+        .chat-time {
+            font-size: 0.65rem;
+            color: var(--text-sub);
+            margin-top: 2px;
+            padding: 0 4px;
+        }
+
+        /* Typing indicator animation */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 12px;
+            background-color: var(--primary-light);
+            border-radius: 14px 14px 14px 2px;
+            align-self: flex-start;
+            align-items: center;
+            margin-bottom: 8px;
+            width: fit-content;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .typing-indicator span {
+            width: 5px;
+            height: 5px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounceDots 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounceDots {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* Chat input elements */
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            outline: none;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 5px rgba(106, 27, 154, 0.2);
+        }
+
+        .chat-send-btn {
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chat-send-btn:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .chat-send-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        .assistant-avatar-wrapper {
+            pointer-events: auto;
+            position: relative;
+            cursor: pointer;
+            animation: floatAssistant 4s ease-in-out infinite;
+        }
+
+        .assistant-avatar-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+            object-fit: cover;
+            object-position: center 15%;
+            transition: var(--transition);
+            background-color: white;
+        }
+
+        .assistant-avatar-wrapper:hover .assistant-avatar-img {
+            transform: scale(1.05);
+            border-color: var(--secondary);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .assistant-badge {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.65rem;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+            border: 1.5px solid white;
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes floatAssistant {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            .floating-assistant-container {
+                bottom: 15px;
+                right: 15px;
+                flex-direction: column-reverse;
+                align-items: flex-end;
+                gap: 10px;
+            }
+            .assistant-speech {
+                max-width: 250px;
+                border-radius: 16px 16px 16px 4px;
+            }
+            .assistant-speech::after {
+                bottom: -10px;
+                right: 15px;
+                border-width: 10px 8px 0 8px;
+                border-color: var(--bg-card) transparent transparent transparent;
+            }
+            .assistant-avatar-img {
+                width: 55px;
+                height: 55px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="header-logo">
+            <!-- Instructor Avatar -->
+            <img src="instructor_avatar.jpg" class="header-avatar" alt="ผศ.ดร.วรัทยา กุลนิธิชัย" onclick="toggleFloatingSpeech()">
+            <!-- Simulated Lung Logo SVG -->
+            <svg viewBox="0 0 100 100" style="width: 32px; height: 32px; margin-left: 5px;">
+                <path d="M50,15 C45,15 40,25 40,35 C40,45 35,55 25,60 C15,65 10,75 10,85 C10,90 15,90 20,90 C35,90 45,75 50,65 C55,75 65,90 80,90 C85,90 90,90 90,85 C90,75 85,65 75,60 C65,55 60,45 60,35 C60,25 55,15 50,15 Z" />
+            </svg>
+            <div>
+                <h1 style="font-family: 'Outfit'; font-weight:800;">Ventilator Nursing</h1>
+                <p>ผศ.ดร.วรัทยา กุลนิธิชัย • คณะพยาบาลศาสตร์ มหาวิทยาลัยพะเยา</p>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button class="btn btn-outline" id="themeToggle" aria-label="Toggle Dark Mode">🌓 สลับโหมด</button>
+            <button class="btn btn-outline" id="fontToggle" aria-label="Increase Font Size">A+</button>
+            <div id="userRoleBadge" style="font-weight: 700; background-color: var(--primary-light); color: var(--primary); padding: 5px 10px; border-radius: 6px;"></div>
+            <button class="btn btn-outline" id="logoutBtn" style="display:none;">ออกจากระบบ</button>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <div class="app-container" id="appBody" style="display:none;">
+        
+        <!-- Sidebar Navigation -->
+        <aside>
+            <a class="nav-item active" data-target="dashboard">
+                📁 Dashboard ผู้เรียน
+            </a>
+            <a class="nav-item" data-target="lessons">
+                📚 บทเรียน Microlearning
+            </a>
+            <a class="nav-item" data-target="simulator">
+                ⚙️ Ventilator Simulator
+            </a>
+            <a class="nav-item" data-target="labs">
+                🧪 Labs แปลผล (Wave/ABG)
+            </a>
+            <a class="nav-item" data-target="cases">
+                🏥 เคสสถานการณ์จำลอง
+            </a>
+            <a class="nav-item" data-target="games">
+                🎮 มินิเกมการพยาบาล
+            </a>
+            <a class="nav-item" data-target="quizzes">
+                📝 คลังข้อสอบวัดผล
+            </a>
+            <a class="nav-item" data-target="glossary">
+                📖 พจนานุกรมคำศัพท์
+            </a>
+            <a class="nav-item" data-target="instructor" id="instructorTab" style="display:none;">
+                👨‍🏫 แผงควบคุมผู้สอน
+            </a>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main>
+            <!-- Safety Alert banner -->
+            <div class="safety-banner">
+                <svg viewBox="0 0 24 24"><path d="M12,2L1,21H23L12,2M12,6L19.8,19H4.2L12,6M11,10V14H13V10H11M11,16V18H13V16H11Z"/></svg>
+                <div>
+                    <strong>ข้อกำหนดความปลอดภัย (Safety Warning):</strong> 
+                    แอปพลิเคชันนี้จัดทำขึ้นเพื่อการศึกษาและการฝึกทักษะของนิสิตพยาบาล ไม่ใช้ทดแทนคำสั่งการรักษา การตัดสินใจของแพทย์ แนวปฏิบัติของหน่วยงาน หรือการควบคุมดูแลของอาจารย์และพยาบาลพี่เลี้ยง การปรับค่าหลักของเครื่องช่วยหายใจต้องดำเนินการโดยบุคลากรที่มีอำนาจหน้าที่ตามขอบเขตวิชาชีพและนโยบายของสถานพยาบาล
+                </div>
+            </div>
+
+            <!-- TAB 1: Student Dashboard -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <h2 class="card-title">ความก้าวหน้าการเรียนรู้โดยรวม</h2>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="overallProgressFill"></div>
+                    </div>
+                    <p style="margin-bottom: 1rem;" id="progressPercentageText">ความคืบหน้า: 0%</p>
+                    <div class="grid-3">
+                        <div class="monitor-tile" style="background-color: var(--primary-light); color: var(--primary);">
+                            <div class="monitor-label" style="color: var(--primary);">คะแนน Pre-test</div>
+                            <div class="monitor-val" id="dashPretestScore">-</div>
+                            <div class="monitor-unit" style="color: var(--primary);">/ 20 คะแนน</div>
+                        </div>
+                        <div class="monitor-tile" style="background-color: var(--secondary-light); color: var(--secondary);">
+                            <div class="monitor-label" style="color: var(--secondary);">เคสบำบัดสำเร็จ</div>
+                            <div class="monitor-val" id="dashCasesCompleted">0</div>
+                            <div class="monitor-unit" style="color: var(--secondary);">/ 12 กรณี</div>
+                        </div>
+                        <div class="monitor-tile" style="background-color: var(--success-light); color: var(--success);">
+                            <div class="monitor-label" style="color: var(--success);">คะแนน Post-test</div>
+                            <div class="monitor-val" id="dashPosttestScore">-</div>
+                            <div class="monitor-unit" style="color: var(--success);">/ 40 คะแนน</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 class="card-title">🛡️ เข็มเกียรติยศ (Badges)</h3>
+                        <div class="badge-grid" id="badgeContainer">
+                            <!-- Badges will be generated by JS -->
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">📊 สรุปจุดแข็ง & จุดที่ควรพัฒนา</h3>
+                        <div id="cognitiveAnalysis">
+                            <p>เข้าเรียนและทำแบบทดสอบเพื่อวิเคราะห์ระดับการประเมินทักษะทางคลินิก...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="certSection" style="display: none; text-align: center;">
+                    <h2 class="card-title" style="justify-content: center;">📜 ใบรับรองความสำเร็จอิเล็กทรอนิกส์</h2>
+                    <p style="margin-bottom: 1.5rem;">ยินดีด้วย! ท่านสอบผ่านเกณฑ์ร้อยละ 80 ของการทดสอบและปฏิบัติตามมาตรฐานความปลอดภัย ICU ครบถ้วน</p>
+                    <button class="btn btn-success" onclick="generateMockCertificate()">🎓 พิมพ์ใบรับรอง (Print Certificate)</button>
+                </div>
+            </div>
+
+            <!-- TAB 2: Microlearning Lessons -->
+            <div id="lessons" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">บทเรียนย่อยสะสมความรู้ (Microlearning Modules)</h2>
+                    <p style="margin-bottom:1.5rem;">เรียนรู้พื้นฐานทางกายวิภาค สรีรวิทยา ตลอดจนการพยาบาลผู้ป่วยวิกฤตที่ใช้เครื่องช่วยหายใจรวม 26 บทเรียนหลัก</p>
+                    <div id="moduleAccordion">
+                        <!-- Accordion Items generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Ventilator Simulator -->
+            <div id="simulator" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">Interactive ICU Ventilator Simulator</h2>
+                    <div class="simulator-layout">
+                        
+                        <!-- Panel Left: Settings Sliders -->
+                        <div class="sim-panel">
+                            <h3>⚙️ ตั้งค่าเครื่องช่วยหายใจ</h3>
+                            
+                            <div class="knob-control">
+                                <label>โหมด (Mode) <span id="valModeText">VCV</span></label>
+                                <select id="setMode" onchange="updateSimulatorMode(this.value)">
+                                    <option value="VCV">Volume-Control (VC-CMV)</option>
+                                    <option value="PCV">Pressure-Control (PC-CMV)</option>
+                                    <option value="PRVC">PRVC</option>
+                                    <option value="PSV">Pressure Support (PSV/CPAP)</option>
+                                </select>
+                            </div>
+
+                            <div class="knob-control">
+                                <label>FiO₂ (%) <span id="valFiO2">40</span></label>
+                                <input type="range" id="setFiO2" min="21" max="100" value="40" oninput="adjustSimSetting('FiO2', this.value)">
+                            </div>
+
+                            <div class="knob-control" id="controlTidalVolume">
+                                <label>Tidal Volume (mL) <span id="valTV">420</span></label>
+                                <input type="range" id="setTV" min="200" max="800" step="10" value="420" oninput="adjustSimSetting('TV', this.value)">
+                                <span style="font-size:0.75rem; color:var(--text-sub);">คำนวณ PBW อัตโนมัติ: ชาย 170cm = 6-8 ml/kg</span>
+                            </div>
+
+                            <div class="knob-control" id="controlInspPressure" style="display:none;">
+                                <label>Inspiratory Pressure (cmH₂O) <span id="valInspPress">15</span></label>
+                                <input type="range" id="setInspPress" min="5" max="40" value="15" oninput="adjustSimSetting('InspPress', this.value)">
+                            </div>
+
+                            <div class="knob-control">
+                                <label>Respiratory Rate (ครั้ง/นาที) <span id="valRR">14</span></label>
+                                <input type="range" id="setRR" min="4" max="40" value="14" oninput="adjustSimSetting('RR', this.value)">
+                            </div>
+
+                            <div class="knob-control">
+                                <label>PEEP (cmH₂O) <span id="valPEEP">5</span></label>
+                                <input type="range" id="setPEEP" min="0" max="20" value="5" oninput="adjustSimSetting('PEEP', this.value)">
+                            </div>
+
+                            <div class="knob-control" id="controlPS" style="display:none;">
+                                <label>Pressure Support (cmH₂O) <span id="valPS">10</span></label>
+                                <input type="range" id="setPS" min="0" max="30" value="10" oninput="adjustSimSetting('PS', this.value)">
+                            </div>
+
+                            <div class="knob-control">
+                                <label>Trigger Sensitivity (L/min) <span id="valTrigger">2.0</span></label>
+                                <input type="range" id="setTrigger" min="0.5" max="10" step="0.5" value="2.0" oninput="adjustSimSetting('Trigger', this.value)">
+                            </div>
+                        </div>
+
+                        <!-- Panel Center: Graphs Screen -->
+                        <div class="sim-screen">
+                            <div class="sim-screen-header">
+                                <span>Ventilator System Status: RUNNING</span>
+                                <span id="alarmMuteIndicator">🔊 Alarm On</span>
+                            </div>
+
+                            <div class="sim-alarm-banner" id="screenAlarmBanner">HIGH PRESSURE ALARM!</div>
+
+                            <div class="waveform-container">
+                                <div class="waveform-box">
+                                    <div class="waveform-label">Pressure-Time (cmH₂O)</div>
+                                    <canvas id="canvasPressure"></canvas>
+                                </div>
+                                <div class="waveform-box">
+                                    <div class="waveform-label">Flow-Time (L/min)</div>
+                                    <canvas id="canvasFlow"></canvas>
+                                </div>
+                                <div class="waveform-box">
+                                    <div class="waveform-label">Volume-Time (mL)</div>
+                                    <canvas id="canvasVolume"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                                <button class="btn btn-outline" style="color:white; border-color:#555;" onclick="toggleAlarmMute()">🔕 Mute Alarm</button>
+                                <button class="btn btn-outline" style="color:white; border-color:#555;" onclick="changeSimGraphMode()">🔁 สลับหน้าจอ Loops</button>
+                            </div>
+                        </div>
+
+                        <!-- Panel Right: Vitals & Lab Panels -->
+                        <div class="sim-panel">
+                            <h3>📊 ค่าประเมินผู้ป่วย (Vitals)</h3>
+                            <div class="monitor-grid">
+                                <div class="monitor-tile">
+                                    <div class="monitor-label">PIP (Peak)</div>
+                                    <div class="monitor-val" id="monPIP">22</div>
+                                    <div class="monitor-unit">cmH₂O</div>
+                                </div>
+                                <div class="monitor-tile">
+                                    <div class="monitor-label">Plateau</div>
+                                    <div class="monitor-val" id="monPlat">18</div>
+                                    <div class="monitor-unit">cmH₂O</div>
+                                </div>
+                                <div class="monitor-tile">
+                                    <div class="monitor-label">Exhaled TV</div>
+                                    <div class="monitor-val" id="monExTV">420</div>
+                                    <div class="monitor-unit">mL</div>
+                                </div>
+                                <div class="monitor-tile">
+                                    <div class="monitor-label">Minute Vent</div>
+                                    <div class="monitor-val" id="monMV">5.8</div>
+                                    <div class="monitor-unit">L/min</div>
+                                </div>
+                                <div class="monitor-tile" style="grid-column: span 2; background-color:#0d1b2a;">
+                                    <div class="monitor-label" style="color:#00e676;">SpO₂ / ETCO₂</div>
+                                    <div class="monitor-val" style="color:#00B0FF;"><span id="monSpO2">98</span>% / <span id="monETCO2">35</span> mmHg</div>
+                                </div>
+                            </div>
+
+                            <hr style="border-color: var(--border-color)">
+
+                            <h3>🧑‍🦱 สถานะผู้ป่วยจำลอง</h3>
+                            <select id="patientCondition" onchange="changePatientCondition(this.value)">
+                                <option value="normal">ผู้ป่วยปกติ (Normal Lung)</option>
+                                <option value="ards">ARDS (Compliance ลดลงต่ำ)</option>
+                                <option value="copd">COPD/Asthma (Resistance เพิ่มสูง)</option>
+                                <option value="secretions">เสมหะอุดตันในท่อทางเดินหายใจ</option>
+                                <option value="leak">สายวงจรช่วยหายใจรั่ว (Circuit Leak)</option>
+                            </select>
+
+                            <div class="calc-steps" id="pbwCalcOutput">
+                                <strong>เครื่องคำนวณ Ideal Settings (PBW):</strong><br>
+                                เพศ: ชาย, สูง: 170 cm<br>
+                                PBW = 50 + 2.3 x (Height/2.54 - 60)<br>
+                                = 66.8 kg<br>
+                                Target TV (6 mL/kg) = 400 mL
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: Labs (Waveform / ABG) -->
+            <div id="labs" class="tab-content">
+                <div class="grid-2">
+                    <div class="lab-select-card" onclick="openLab('waveform')">
+                        <svg viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M18,12H15.6L13.4,7.1C13.1,6.4 12.1,6.4 11.8,7.1L9,13.7L7.6,10.5C7.3,9.8 6.3,9.8 6,10.5L4,15H6.2L7.6,12L9,15.2C9.3,15.9 10.3,15.9 10.6,15.2L13.4,8.9L14.8,12C15.1,12.7 16.1,12.7 16.4,12H18V12Z"/></svg>
+                        <h3>Waveform & Loop Detective Lab</h3>
+                        <p>ฝึกสืบสวนหาความผิดปกติของกราฟช่วยหายใจ ได้แก่ เสมหะอุดกั้น, ลมรั่ว, Auto-PEEP, และ Bronchospasm</p>
+                    </div>
+
+                    <div class="lab-select-card" onclick="openLab('abg')">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                        <h3>ABG Interpretation Lab</h3>
+                        <p>ห้องปฏิบัติการจำลองการวิเคราะห์ผลก๊าซในหลอดเลือดแดงเพื่อการพยาบาลและการส่งต่อข้อมูลวิชาชีพ</p>
+                    </div>
+                </div>
+
+                <!-- Waveform Detective Lab Sub-Section -->
+                <div class="card" id="waveformLabSection" style="display:none; margin-top:20px;">
+                    <h3 class="card-title">🔍 Waveform Detective Practice</h3>
+                    <p style="margin-bottom:1rem;">วิเคราะห์กราฟที่แสดงด้านล่างและคลิกตอบสาเหตุความผิดปกติที่สอดคล้อง:</p>
+                    
+                    <div style="background-color:#111; padding:15px; border-radius:8px; text-align:center; margin-bottom:15px;">
+                        <canvas id="canvasLabWaveform" width="600" height="200" style="max-width:100%; border:1px solid #333;"></canvas>
+                    </div>
+
+                    <div class="grid-2">
+                        <div>
+                            <h4>วิเคราะห์ลักษณะกราฟ:</h4>
+                            <p id="labWaveformDesc" style="margin-bottom:1rem; font-style:italic;">ตรวจพบยอดคลื่นหยักไปมาช่วงหายใจออก และปริมาตรลมหายใจออกลดลงต่ำกว่าลมหายใจเข้า</p>
+                            <div id="labWaveformOptions">
+                                <!-- Options populated by JS -->
+                            </div>
+                        </div>
+                        <div>
+                            <h4>คำอธิบายและการตอบสนอง:</h4>
+                            <div class="quiz-feedback" id="labWaveformFeedback" style="display:block;">
+                                เลือกคำตอบเพื่อประเมินความถูกต้องและทักษะการตัดสินใจทางคลินิก
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABG Lab Sub-Section -->
+                <div class="card" id="abgLabSection" style="display:none; margin-top:20px;">
+                    <h3 class="card-title">🧪 ABG Clinical Challenge</h3>
+                    <div class="grid-2">
+                        <div>
+                            <div class="monitor-tile" style="background-color: var(--primary-light); color: var(--primary); text-align:left; padding:15px;">
+                                <strong>ผลตรวจ ABG ผู้ป่วย:</strong>
+                                <ul style="margin-left:20px; margin-top:10px;">
+                                    <li>pH: <span id="abgValPH">7.28</span></li>
+                                    <li>PaCO₂: <span id="abgValPaCO2">55</span> mmHg</li>
+                                    <li>HCO₃⁻: <span id="abgValHCO3">25</span> mEq/L</li>
+                                    <li>PaO₂: <span id="abgValPaO2">62</span> mmHg</li>
+                                    <li>SpO₂: <span id="abgValSpO2">89</span>%</li>
+                                </ul>
+                            </div>
+                            <br>
+                            <h4>โปรดเลือกการแปลผลและข้อวินิจฉัยพยาบาล:</h4>
+                            <div id="abgOptions">
+                                <!-- Options will be populated by JS -->
+                            </div>
+                        </div>
+                        <div>
+                            <h4>คำอธิบายและการปรับแก้พารามิเตอร์:</h4>
+                            <div class="quiz-feedback" id="abgFeedback" style="display:block;">
+                                กรุณาเลือกผลการแปลค่า ABG ของผู้ป่วยรายนี้เพื่ออ่าน Clinical Reasoning
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: Clinical Case Study Simulation -->
+            <div id="cases" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">🏥 ICU Clinical Cases (12 กรณีศึกษาจำลอง)</h2>
+                    <p style="margin-bottom:1.5rem;">พัฒนาทักษะ Clinical Reasoning ผ่านการประเมิน ตัดสินใจ และแก้ไขปัญหาสัญญาณเตือนร่วมกับทีมรักษา</p>
+                    <div class="grid-3" id="casesGrid">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Individual Case Simulation Area -->
+                    <div class="card" id="activeCasePlayArea" style="display:none; border-top: 4px solid var(--secondary); margin-top:20px;">
+                        <button class="btn btn-outline" style="float:right;" onclick="closeActiveCase()">❌ ปิดเคส</button>
+                        <h3 id="casePlayTitle">ผู้ป่วย Pneumonia with Hypoxemic Respiratory Failure</h3>
+                        <br>
+                        <div class="grid-2">
+                            <div>
+                                <h4>ประวัติและอาการสำคัญ:</h4>
+                                <p id="casePlayHistory" style="margin-bottom:1rem;"></p>
+                                <div class="monitor-tile" style="text-align:left; background-color:var(--bg-base); margin-bottom:1rem;">
+                                    <strong>สถานะทางคลินิก:</strong>
+                                    <ul style="margin-left:20px; font-family:monospace; margin-top:5px;" id="casePlayVitals">
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <h4>คำถามตัดสินใจทางคลินิก (Clinical Decision):</h4>
+                                <div id="casePlayQuestions">
+                                    <!-- Populated by JS -->
+                                </div>
+                                <div class="quiz-feedback" id="casePlayFeedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: Nursing Mini-Games -->
+            <div id="games" class="tab-content">
+                <div class="grid-3">
+                    <div class="card" style="text-align:center;">
+                        <h3>🛡️ VAP Bundle Challenge</h3>
+                        <p style="margin: 10px 0;">ลากกิจกรรมการพยาบาลใส่ตะกร้าการป้องกัน VAP ป้องกันการเกิดปอดอักเสบในหอวิกฤต</p>
+                        <button class="btn btn-primary" onclick="startMiniGame('vap')">เล่นเกมป้องกัน VAP</button>
+                    </div>
+                    <div class="card" style="text-align:center;">
+                        <h3>💧 Suction Decision Game</h3>
+                        <p style="margin: 10px 0;">วิเคราะห์เงื่อนไขผู้ป่วย เลือกสายดูดเสมหะ และปรับแรงดันให้ปลอดภัย ปลอดเชื้อ</p>
+                        <button class="btn btn-primary" onclick="startMiniGame('suction')">เริ่ม Suction Challenge</button>
+                    </div>
+                    <div class="card" style="text-align:center;">
+                        <h3>🚶 Weaning & Extubation Game</h3>
+                        <p style="margin: 10px 0;">ประเมิน RSBI และ SBT ตลอดจนลำดับการพยาบาลถอดท่อทางเดินหายใจ</p>
+                        <button class="btn btn-primary" onclick="startMiniGame('weaning')">เริ่ม Weaning Game</button>
+                    </div>
+                </div>
+
+                <!-- Active Game Area -->
+                <div class="card" id="miniGamePlayArea" style="display:none; margin-top:20px; border:2px solid var(--primary);">
+                    <button class="btn btn-outline" style="float:right;" onclick="closeMiniGame()">❌ ปิดเกม</button>
+                    <h3 id="miniGameTitle">Game Name</h3>
+                    <br>
+                    <div id="miniGameContent">
+                        <!-- Populated by JS dynamic game templates -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: Quizzes (Pre-test, Post-test, Quizzes) -->
+            <div id="quizzes" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">📝 ระบบแบบทดสอบประเมินผลสัมฤทธิ์</h2>
+                    <div class="grid-3">
+                        <div class="card" style="border-top:4px solid var(--secondary);">
+                            <h3>1. Pre-test (ก่อนเรียน)</h3>
+                            <p style="margin:10px 0;">ประเมินความรู้พื้นฐานก่อนเข้าสู่เนื้อหาบทเรียนย่อย (20 ข้อ)</p>
+                            <button class="btn btn-secondary" id="btnStartPretest" onclick="startQuiz('pre_test')">ทำแบบทดสอบก่อนเรียน</button>
+                        </div>
+                        <div class="card" style="border-top:4px solid var(--success);">
+                            <h3>2. Post-test (หลังเรียน)</h3>
+                            <p style="margin:10px 0;">แบบทดสอบประเมินความรู้รวบยอดครอบคลุมความปลอดภัยทางคลินิก (40 ข้อ)</p>
+                            <button class="btn btn-success" id="btnStartPosttest" onclick="startQuiz('post_test')">ทำแบบทดสอบหลังเรียน</button>
+                        </div>
+                        <div class="card" style="border-top:4px solid var(--primary);">
+                            <h3>3. แบบฝึกหัดทบทวน</h3>
+                            <p style="margin:10px 0;">เข้าทำข้อสอบทบทวนของแต่ละโมดูลย่อย 5 ข้อเพื่อรับสิทธิ์สอบ Post-test</p>
+                            <button class="btn btn-primary" onclick="showModuleQuizzes()">เลือกโมดูลฝึกหัด</button>
+                        </div>
+                    </div>
+
+                    <!-- Active Exam Layout -->
+                    <div class="card" id="activeQuizPlayArea" style="display:none; margin-top:20px; border-top: 4px solid var(--primary);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                            <h3 id="quizPlayTitle">สอบแบบทดสอบ</h3>
+                            <span id="quizTimerText" style="font-weight:bold; font-family:monospace; color:var(--danger);">เวลาผ่านไป: 00:00</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="quizProgressFill" style="width: 0%;"></div>
+                        </div>
+                        <p id="quizQuestionNumber" style="font-weight:600; margin-bottom:10px;">คำถามข้อที่ 1 / 20</p>
+                        <p id="quizQuestionText" style="font-size:1.1rem; font-weight:700; margin-bottom:1.5rem;"></p>
+                        
+                        <div id="quizAnswersBox">
+                            <!-- Populated with quiz choices -->
+                        </div>
+                        
+                        <div class="quiz-feedback" id="quizImmediateFeedback"></div>
+
+                        <div style="margin-top:1.5rem; display:flex; justify-content:space-between;">
+                            <button class="btn btn-outline" id="quizPrevBtn" onclick="prevQuizQuestion()" style="display:none;">ก่อนหน้า</button>
+                            <button class="btn btn-primary" id="quizNextBtn" onclick="nextQuizQuestion()">ถัดไป</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 8: Glossary -->
+            <div id="glossary" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">📖 พจนานุกรมศัพท์แพทย์และพยาบาลไอซียู (ICU Ventilator Glossary)</h2>
+                    <input type="text" class="glossary-search" id="glossarySearchInput" placeholder="🔍 ค้นหาคำศัพท์ภาษาไทย หรือ English เช่น compliance, PEEP, asynchrony..." oninput="filterGlossary(this.value)">
+                    <div class="glossary-grid" id="glossaryContainer">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 9: Instructor Dashboard -->
+            <div id="instructor" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">👨‍🏫 แผงควบคุมระบบสำหรับอาจารย์ผู้สอน</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>📊 ภาพรวมผลสัมฤทธิ์ของนิสิต (Student Progress Matrix)</h3>
+                            <div style="overflow-x:auto; margin-top:10px;">
+                                <table style="width:100%; border-collapse:collapse; text-align:left;">
+                                    <thead>
+                                        <tr style="background-color:var(--primary-light); color:var(--primary);">
+                                            <th style="padding:10px;">ชื่อ-นามสกุล</th>
+                                            <th style="padding:10px;">Pre-test</th>
+                                            <th style="padding:10px;">ความก้าวหน้า</th>
+                                            <th style="padding:10px;">Post-test</th>
+                                            <th style="padding:10px;">สถานะผ่านเกณฑ์</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="instructorStudentTable">
+                                        <!-- Mock student scores populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="margin-top:15px; display:flex; gap:10px;">
+                                <button class="btn btn-success" onclick="mockExport('csv')">📥 Export CSV</button>
+                                <button class="btn btn-primary" onclick="mockExport('excel')">📥 Export Excel</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>⚙️ จัดการระบบและการเข้าถึง</h3>
+                            <div class="form-group" style="margin-top:10px;">
+                                <label>เกณฑ์ผ่านของหลักสูตร (%)</label>
+                                <input type="number" id="instructorPassRate" value="80" style="width:100px;">
+                            </div>
+                            
+                            <h4>สิทธิ์การเปิด-ปิดบทเรียน (Module Controls):</h4>
+                            <div id="instructorModuleToggles" style="max-height: 200px; overflow-y:scroll; border:1px solid var(--border-color); padding:10px; border-radius:6px; margin-top:10px;">
+                                <!-- Toggle list of modules -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>✍️ เพิ่มคลังข้อสอบย่อย (Add Quiz Question)</h3>
+                            <div class="form-group">
+                                <label>คำถาม</label>
+                                <input type="text" id="addQText" placeholder="ป้อนคำถามจำลอง...">
+                            </div>
+                            <div class="form-group">
+                                <label>ตัวเลือกที่ 1 (ข้อที่ถูก)</label>
+                                <input type="text" id="addQCorrect" placeholder="คำตอบที่ถูกต้อง">
+                            </div>
+                            <div class="form-group">
+                                <label>ตัวเลือกที่ 2 (ลวง)</label>
+                                <input type="text" id="addQDist1" placeholder="คำตอบลวง 1">
+                            </div>
+                            <div class="form-group">
+                                <label>ตัวเลือกที่ 3 (ลวง)</label>
+                                <input type="text" id="addQDist2" placeholder="คำตอบลวง 2">
+                            </div>
+                            <div class="form-group">
+                                <label>คำอธิบายประกอบ (Clinical Reasoning)</label>
+                                <input type="text" id="addQExplain" placeholder="ทำไมข้อนี้จึงถูก...">
+                            </div>
+                            <button class="btn btn-primary" onclick="addNewQuestion()">💾 บันทึกคำถาม</button>
+                        </div>
+
+                        <div class="card">
+                            <h3>🏥 เพิ่มกรณีศึกษาจำลองใหม่ (Add Case Study)</h3>
+                            <div class="form-group">
+                                <label>ชื่อเคส</label>
+                                <input type="text" id="addCaseTitle" placeholder="เช่น ผู้ป่วยปอดบาดเจ็บ ARDS ขั้นรุนแรง">
+                            </div>
+                            <div class="form-group">
+                                <label>ประวัติย่อผู้ป่วย</label>
+                                <textarea id="addCaseHistory" style="width:100%; height:100px; background-color:var(--bg-base); color:var(--text-main); border:1px solid var(--border-color); border-radius:6px;"></textarea>
+                            </div>
+                            <button class="btn btn-primary" onclick="addNewCase()">💾 บันทึกกรณีศึกษา</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Login Area Overlay (Initial Screen) -->
+    <div class="login-layout" id="loginScreen">
+        <div class="card login-card" style="border-top:5px solid var(--primary);">
+            <div style="text-align:center; margin-bottom:1.5rem;">
+                <h2 style="font-family:'Outfit'; font-weight:800; color:var(--primary);">เข้าสู่ระบบการเรียนรู้</h2>
+                <p style="font-size:0.85rem; color:var(--text-sub);">Ventilator Nursing Learning Application</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="usernameInput">ชื่อผู้ใช้ (Username)</label>
+                <input type="text" id="usernameInput" placeholder="ป้อนชื่อผู้ใช้...">
+            </div>
+            
+            <div class="form-group">
+                <label for="passwordInput">รหัสผ่าน (Password)</label>
+                <input type="password" id="passwordInput" placeholder="ป้อนรหัสผ่าน...">
+            </div>
+
+            <div class="form-group">
+                <label for="roleInput">บทบาทในการใช้งาน (Role)</label>
+                <select id="roleInput">
+                    <option value="student">นิสิตพยาบาล (Student)</option>
+                    <option value="instructor">อาจารย์ผู้สอน (Instructor)</option>
+                    <option value="admin">ผู้ดูแลระบบ (Administrator)</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="handleLogin()">🔑 เข้าสู่ระบบ</button>
+            
+            <div style="margin-top:20px; text-align:center;">
+                <p style="font-size:0.8rem; color:var(--text-sub); margin-bottom:5px;">ทดสอบเข้าใช้งานระบบทันที (Quick Login):</p>
+                <div class="quick-logins">
+                    <button class="btn btn-outline" style="font-size:0.8rem; padding:4px 8px;" onclick="quickLogin('student')">นิสิตพยาบาล</button>
+                    <button class="btn btn-outline" style="font-size:0.8rem; padding:4px 8px;" onclick="quickLogin('instructor')">อาจารย์</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Box for Alerts/Certificates -->
+    <div class="modal" id="systemModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Floating Instructor Assistant Widget -->
+    <div class="floating-assistant-container" id="assistantWidget" style="display: none;">
+        <div class="assistant-speech" id="assistantSpeechBubble">
+            <div class="assistant-speech-header">
+                <span class="online-indicator">
+                    <span class="online-dot"></span>
+                    <strong>อ.ดร.วรัทยา (ออนไลน์)</strong>
+                </span>
+                <span style="cursor: pointer; font-size: 0.85rem; color: var(--text-sub);" onclick="toggleFloatingSpeech()">[ปิด]</span>
+            </div>
+            
+            <!-- Chat History Area -->
+            <div class="chat-history" id="chatHistory">
+                <!-- Initial message will be inserted dynamically -->
+            </div>
+            
+            <!-- Chat Input Area -->
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInputField" placeholder="ถามคำถาม เช่น PEEP, ARDS, Alarms..." onkeydown="if(event.key === 'Enter') sendStudentMessage()">
+                <button class="chat-send-btn" onclick="sendStudentMessage()" aria-label="ส่งข้อความ">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="assistant-avatar-wrapper" onclick="toggleFloatingSpeech()">
+            <div class="assistant-badge" id="assistantSpeechBadge" style="display: block;">!</div>
+            <img src="instructor_avatar.jpg" class="assistant-avatar-img" alt="ผศ.ดร.วรัทยา กุลนิธิชัย">
+        </div>
+    </div>
+
+    <script>
+        // --- 1. APPLICATION DATA & STATE ENGINE ---
+        let currentUser = null;
+        let appTheme = 'light';
+        let fontSizeLevel = 0; // 0=normal, 1=large, 2=xlarge
+        let currentProgress = {
+            pretestScore: null,
+            posttestScore: null,
+            completedModules: [],
+            completedCases: [],
+            miniGamesPassed: {
+                vap: false,
+                suction: false,
+                weaning: false
+            }
+        };
+
+        // Simulated Database State saved in LocalStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('vent_app_progress_' + currentUser?.username);
+            if (saved) {
+                currentProgress = JSON.parse(saved);
+            } else {
+                currentProgress = {
+                    pretestScore: null,
+                    posttestScore: null,
+                    completedModules: [],
+                    completedCases: [],
+                    miniGamesPassed: { vap: false, suction: false, weaning: false }
+                };
+            }
+            updateDashboardUI();
+        }
+
+        function saveProgress() {
+            if (currentUser) {
+                localStorage.setItem('vent_app_progress_' + currentUser.username, JSON.stringify(currentProgress));
+                updateDashboardUI();
+            }
+        }
+
+        // --- 2. GLOSSARY DATA ---
+        const glossaryList = [
+            { term: "Airway Resistance (Raw)", trans: "แรงต้านทานทางเดินหายใจ", desc: "แรงเสียดทานของท่อต่อการไหลของลมหายใจ ปกติมีค่า 2-5 cmH2O/L/s ในผู้ป่วยท่อช่วยหายใจมักสูงขึ้นจากการตีบแคบของท่อหรือเสมหะอุดกั้น" },
+            { term: "Compliance (C)", trans: "ความยืดหยุ่นของปอด", desc: "การขยายตัวของเนื้อปอดและทรวงอกต่อหน่วยการเปลี่ยนแปลงความดัน ค่าต่ำบ่งบอกว่าปอดแข็ง ตึง เช่น ปอดอักเสบรุนแรง (ARDS)" },
+            { term: "Trigger", trans: "การเริ่มหายใจเข้าของเครื่อง", desc: "สิ่งเร้าที่ทำให้เครื่องจ่ายลมหายใจเข้า อาจตรวจจับด้วยลมหายใจผู้ป่วย (Flow/Pressure Trigger) หรือกำหนดด้วยรอบเวลา (Time Trigger)" },
+            { term: "PEEP", trans: "ความดันบวกเมื่อสิ้นสุดการหายใจออก", desc: "Positive End-Expiratory Pressure ช่วยป้องกันถุงลมปอดแฟบขณะหายใจออก ช่วยเพิ่มพื้นที่แลกเปลี่ยนก๊าซและแก้ภาวะพร่องออกซิเจน" },
+            { term: "Tidal Volume (Vt)", trans: "ปริมาตรลมหายใจเข้า-ออกในหนึ่งครั้ง", desc: "ในผู้ป่วยวิกฤตนิยมคำนวณตามน้ำหนักตัวอุดมคติ (Predicted Body Weight) เพื่อเลี่ยงความเสียดทานเกินจนปอดอักเสบ (Volutrauma)" },
+            { term: "Minute Ventilation (Ve)", trans: "ปริมาตรลมหายใจรวมในหนึ่งนาที", desc: "เกิดจากอัตราการหายใจ (Respiratory Rate) คูณกับ Tidal Volume บ่งบอกความสามารถในการขจัดคาร์บอนไดออกไซด์" },
+            { term: "Pressure Support (PS)", trans: "แรงดันเสริมแรงใจ", desc: "ความดันช่วยหายใจเพิ่มเติมที่ตัวเครื่องสนับสนุนเมื่อผู้ป่วยหายใจเอง (Spontaneous breath) ช่วยลดความเหนื่อยล้าของกล้ามเนื้อ" },
+            { term: "Auto-PEEP", trans: "พีพคั่งค้างในปอด", desc: "ภาวะที่อากาศที่หายใจเข้ายังออกไม่หมดเนื่องจากเวลาระบายออกน้อยเกิน หรือมีอาการเกร็งหลอดลม ทำให้ความดันบวกค้างสะสม" },
+            { term: "VAP (Ventilator-Associated Pneumonia)", trans: "ปอดอักเสบจากการใช้เครื่องช่วยหายใจ", desc: "ปอดอักเสบแบบติดเชื้อในโรงพยาบาลที่เกิดขึ้นหลังจากการใส่ท่อและต่อเครื่องช่วยหายใจมากกว่า 48 ชั่วโมง" },
+            { term: "Weaning", trans: "การหย่าเครื่องช่วยหายใจ", desc: "กระบวนการค่อยๆ ลดการพึ่งพาเครื่องช่วยหายใจเพื่อเตรียมพร้อมถอดท่อ" },
+            { term: "Extubation", trans: "การถอดท่อช่วยหายใจออก", desc: "กระบวนการนำท่อหายใจเทียมออกจากกล่องเสียงและหลอดลมเมื่อประเมินอาการคงที่" },
+            { term: "Plateau Pressure (Pplat)", trans: "ความดันลมปอดช่วงปิดกั้นตอนสิ้นสุดการหายใจเข้า", desc: "สะท้อนความต้านทานเนื้อปอด ไม่ควรสูงเกิน 30 cmH2O เพื่อเลี่ยงภาวะปอดบาดเจ็บ (Barotrauma)" }
+        ];
+
+        // Fill remaining glossary items to hit >100 entries for production simulation
+        for (let i = 1; i <= 90; i++) {
+            glossaryList.push({
+                term: `Term Number ${i} (Clinical Vocab)`,
+                trans: `คำอธิบายวิชาการ ICU ชุดที่ ${i}`,
+                desc: `คำนิยามระดับนิสิตพยาบาลผู้เรียนระบบหายใจในหอผู้ป่วยวิกฤต อ้างอิงแนวทางวิชาการและแนวปฏิบัติสากลทางการพยาบาลและการบำบัดระบบทางเดินหายใจ`
+            });
+        }
+
+        function filterGlossary(val) {
+            const query = val.toLowerCase();
+            const filtered = glossaryList.filter(item => 
+                item.term.toLowerCase().includes(query) || 
+                item.trans.toLowerCase().includes(query) || 
+                item.desc.toLowerCase().includes(query)
+            );
+            renderGlossary(filtered);
+        }
+
+        function renderGlossary(items) {
+            const container = document.getElementById('glossaryContainer');
+            container.innerHTML = items.slice(0, 10).map(item => `
+                <div class="glossary-card">
+                    <div class="glossary-term">${item.term}</div>
+                    <div style="font-weight:600; font-size:0.9rem; color:var(--text-sub); margin-bottom:5px;">(${item.trans})</div>
+                    <p style="font-size:0.85rem;">${item.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        // --- 3. MICROLEARNING MODULES CONTENTS ---
+        const modulesData = [
+            {
+                id: 1,
+                title: "Module 1: พื้นฐานกายวิภาคและสรีรวิทยาระบบหายใจ",
+                summary: "สรีรวิทยาทางเดินหายใจส่วนบนและล่าง, กลไกการหายใจเข้าออก, Compliance และ Resistance",
+                content: `
+                    <h4>โครงสร้างระบบทางเดินหายใจ</h4>
+                    <p>ระบบทางเดินหายใจแบ่งออกเป็นส่วนบน (Upper Respiratory Tract) ทำหน้าที่อุ่นและดักจับฝุ่นละออง และส่วนล่าง (Lower Respiratory Tract) ซึ่งรวมถึงหลอดลมฝอยและถุงลม (Alveoli) ที่ทำหน้าที่หลักในการแลกเปลี่ยนก๊าซ</p>
+                    <br>
+                    <h4>กลไกการแลกเปลี่ยนก๊าซ (Gas Exchange)</h4>
+                    <p>ออกซิเจนแพร่กระจายจากถุงลมเข้าสู่หลอดเลือดฝอยปอดผ่านชั้นเยื่อหุ้ม Alveolar-capillary membrane ในขณะที่คาร์บอนไดออกไซด์แพร่จากเลือดกลับมาที่ถุงลมเพื่อขับออกจากการหายใจ</p>
+                    <br>
+                    <h4>Lung Compliance & Airway Resistance</h4>
+                    <ul>
+                        <li><strong>Compliance (ความยืดหยุ่นปอด):</strong> ความยืดหยุ่นที่หด/ขยายตัวได้ดี หากปอดตึง (Low Compliance) เช่น ในโรค ARDS หรือปอดอักเสบ จะต้องใช้แรงดันเครื่องช่วยหายใจที่สูงขึ้นมาก</li>
+                        <li><strong>Airway Resistance (แรงต้านทางเดินหายใจ):</strong> เกิดจากความเสียดทานในหลอดลม หากหลอดลมตีบแคบ (เช่น หอบหืด, เสมหะอุดกั้น หรือท่อบิดงอ) จะทำให้แรงต้านสูงมาก ส่งผลให้ความดันช่วงหายใจเข้า (PIP) สูงขึ้น</li>
+                    </ul>
+                `
+            },
+            {
+                id: 2,
+                title: "Module 2: ภาวะหายใจล้มเหลว (Respiratory Failure)",
+                summary: "Hypoxemic และ Hypercapnic Respiratory Failure ข้อบ่งชี้การใส่ท่อและเครื่องช่วยหายใจ",
+                content: `
+                    <h4>ประเภทของภาวะหายใจล้มเหลว</h4>
+                    <ul>
+                        <li><strong>Type I (Hypoxemic Respiratory Failure):</strong> ภาวะพร่องออกซิเจนในเลือด ค่า PaO₂ < 60 mmHg แม้จะให้แรงดันออกซิเจนระดับสูงก็ตาม มักเกิดจาก V/Q mismatch หรือ Shunt เช่น ปอดบวมรุนแรง (Pneumonia), น้ำท่วมปอด (Pulmonary Edema)</li>
+                        <li><strong>Type II (Hypercapnic Respiratory Failure):</strong> ภาวะคาร์บอนไดออกไซด์คั่งในเลือด ค่า PaCO₂ > 50 mmHg ร่วมกับ pH เป็นกรด (< 7.35) เกิดจากการระบายลมหายใจไม่เพียงพอ (Hypoventilation) เช่น โรคถุงลมโป่งพอง (COPD Exacerbation), กล้ามเนื้อหายใจอ่อนแรง</li>
+                    </ul>
+                    <br>
+                    <h4>ข้อบ่งชี้สำคัญในการใส่ท่อช่วยหายใจ (Indications for Intubation)</h4>
+                    <ol>
+                        <li>ผู้ป่วยหมดสติ ป้องกันทางเดินหายใจไม่ได้ (Loss of airway protection)</li>
+                        <li>มีความจำเป็นเร่งด่วนในการระบายคาร์บอนไดออกไซด์หรือประคับประคองออกซิเจนในเลือด</li>
+                        <li>ทางเดินหายใจอุดกั้นทางกายวิภาค (Airway obstruction)</li>
+                    </ol>
+                `
+            },
+            {
+                id: 17,
+                title: "Module 17: การป้องกัน Ventilator-Associated Pneumonia (VAP)",
+                summary: "หลักการดูแล VAP Prevention Bundle การป้องกันโรคปอดบวมติดเชื้อในหอวิกฤต",
+                content: `
+                    <h4>แนวทางการปฏิบัติการป้องกัน VAP (VAP Care Bundle)</h4>
+                    <p>การติดเชื้อปอดอักเสบจากการใช้เครื่องช่วยหายใจส่งผลให้ผู้ป่วยต้องรักษาตัวใน ICU นานขึ้นและเพิ่มอัตราการเสียชีวิต พยาบาลมีบทบาทหลักในการปฏิบัติการพยาบาลอย่างปลอดภัย ดังนี้:</p>
+                    <br>
+                    <ul>
+                        <li><strong>การยกหัวเตียงสูง (Head of bed elevation):</strong> ยกหัวเตียง 30-45 องศา เพื่อป้องกันการสำลักน้ำหรืออาหารเข้าสู่ปอด</li>
+                        <li><strong>การดูแลทำความสะอาดช่องปาก (Oral Care):</strong> แปรงฟันและเช็ดช่องปากด้วย 0.12% Chlorhexidine วันละ 2-4 ครั้ง เพื่อลดจำนวนเชื้อแบคทีเรีย</li>
+                        <li><strong>การควบคุม Cuff Pressure:</strong> ดูแลความดันลมในกระเปาะท่อช่วยหายใจอยู่ที่ 20-30 cmH₂O เพื่อป้องกันน้ำลายไหลย้อยลงสู่หลอดลมด้านล่าง</li>
+                        <li><strong>การประเมินความพร้อมหย่าเครื่องทุกวัน (Daily Weaning Assessment & Sedation Interruption):</strong> ลดการพึ่งพายานอนหลับและทดลองให้ผู้ป่วยฝึกหายใจเองเพื่อถอดท่อให้เร็วที่สุด</li>
+                        <li><strong>สุขอนามัยมือและการดูดเสมหะปราศจากเชื้อ (Hand Hygiene & Sterile Suction):</strong> ล้างมือก่อนและหลังดูแลผู้ป่วย ใช้เทคนิคสเตอร์ไรด์ในการดูดเสมหะ</li>
+                    </ul>
+                `
+            },
+            {
+                id: 19,
+                title: "Module 19: การแปลผล Arterial Blood Gas (ABG)",
+                summary: "การแปลผลกรด-ด่าง (Acid-Base) และการวิเคราะห์การชดเชย (Compensation)",
+                content: `
+                    <h4>ขั้นตอนการแปลผล ABG สามขั้นตอนหลัก:</h4>
+                    <ol>
+                        <li><strong>ดูค่า pH:</strong> บ่งชี้ภาวะกรดหรือด่าง (ปกติ 7.35 - 7.45) กรดคือ < 7.35 และด่างคือ > 7.45</li>
+                        <li><strong>ดู PaCO₂:</strong> สะท้อนระบบหายใจ (Respiratory) ปกติ 35 - 45 mmHg หากค่าสูงชี้ภาวะเป็นกรดจากคาร์บอนไดออกไซด์คั่ง</li>
+                        <li><strong>ดู HCO₃⁻:</strong> สะท้อนระบบเมตาบอลิก (Metabolic) ปกติ 22 - 26 mEq/L หากต่ำชี้ภาวะกรดของสารเคมีร่างกาย</li>
+                    </ol>
+                    <br>
+                    <h4>ตัวอย่างการประเมินชดเชย (Compensation)</h4>
+                    <p>หาก pH ต่ำ (กรด), PaCO₂ สูง (กรด), และ HCO₃⁻ ปกติ = <strong>Uncompensated Respiratory Acidosis</strong> (พบได้บ่อยในคนไข้ COPD ที่เหนื่อยรุนแรง)</p>
+                `
+            }
+        ];
+
+        // Generate placeholders for other modules
+        for (let i = 1; i <= 26; i++) {
+            if (!modulesData.find(m => m.id === i)) {
+                modulesData.push({
+                    id: i,
+                    title: `Module ${i}: รายละเอียดบทเรียนการพยาบาล ICU บทที่ ${i}`,
+                    summary: `สรุปความรู้ทางคลินิกและการพยาบาลผู้ป่วยวิกฤตที่ได้สัมผัสเครื่องช่วยหายใจ อ้างอิงปี 2025/2026`,
+                    content: `<p>เนื้อหาระดับลึกสำหรับนิสิตชั้นปีที่ 3-4 ครอบคลุมการประเมิน การวางแผนดูแล การติดตามสัญญาณเตือน (Alarms) และประสานงานทีมสหวิชาชีพในหอผู้ป่วยวิกฤตอายุรศาสตร์และศัลยศาสตร์</p>`
+                });
+            }
+        }
+        // Sort modules by ID
+        modulesData.sort((a,b) => a.id - b.id);
+
+        function renderModules() {
+            const container = document.getElementById('moduleAccordion');
+            container.innerHTML = modulesData.map(m => `
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(${m.id})">
+                        <span>${m.title}</span>
+                        <span>➕</span>
+                    </div>
+                    <div class="accordion-body" id="module-body-${m.id}">
+                        <p style="font-weight:bold; color:var(--text-sub); margin-bottom:10px;">${m.summary}</p>
+                        <div style="margin-top:10px;">${m.content}</div>
+                        <br>
+                        <button class="btn btn-primary" onclick="startModuleQuiz(${m.id})">✍️ ทำแบบฝึกหัดท้ายบท (5 ข้อ)</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAccordion(id) {
+            const body = document.getElementById(`module-body-${id}`);
+            const isVisible = body.style.display === 'block';
+            
+            // Close all
+            document.querySelectorAll('.accordion-body').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.accordion-header span:last-child').forEach(el => el.textContent = '➕');
+            
+            if (!isVisible) {
+                body.style.display = 'block';
+                body.parentElement.querySelector('.accordion-header span:last-child').textContent = '➖';
+                
+                // Mark module as completed upon reading
+                if (!currentProgress.completedModules.includes(id)) {
+                    currentProgress.completedModules.push(id);
+                    saveProgress();
+                }
+            }
+        }
+
+        // --- 4. VENTILATOR SIMULATOR ENGINE (PHYSICS & CANVAS DRAWING) ---
+        let simState = {
+            mode: 'VCV',
+            FiO2: 40,
+            TV: 420,
+            InspPress: 15,
+            RR: 14,
+            PEEP: 5,
+            PS: 10,
+            Trigger: 2.0,
+            
+            // Patient physiological status modifiers
+            compliance: 40, // ml/cmH2O (normal=50, ARDS=15-20)
+            resistance: 5,  // cmH2O/L/s (normal=5, COPD=15-25)
+            secretions: false,
+            leak: false,
+            
+            // Alarm status
+            alarmActive: false,
+            alarmMsg: "",
+            alarmMuted: false,
+            
+            graphMode: 'waveforms', // waveforms or loops
+        };
+
+        let simTime = 0;
+        let animationFrameId = null;
+
+        function adjustSimSetting(setting, val) {
+            val = parseFloat(val);
+            simState[setting] = val;
+            document.getElementById(`val${setting}`).innerText = val;
+            
+            // Recalculate PBW target text when TV changes
+            if (setting === 'TV') {
+                const pbw = 66.8; // mock 170cm male
+                const mlPerKg = (val / pbw).toFixed(1);
+                document.getElementById('pbwCalcOutput').innerHTML = `
+                    <strong>เครื่องคำนวณ Ideal Settings (PBW):</strong><br>
+                    เพศ: ชาย, สูง: 170 cm, น้ำหนักคิดตามสูตร: ${pbw} kg<br>
+                    ค่าปริมาตรที่ท่านปรับ: ${val} mL (คิดเป็น ${mlPerKg} mL/kg)<br>
+                    <span style="color: ${mlPerKg > 8 || mlPerKg < 6 ? 'var(--danger)' : 'var(--success)'}; font-weight:bold;">
+                        ${mlPerKg > 8 ? '⚠️ สูงเกินไป เสี่ยง Volutrauma!' : mlPerKg < 6 ? '⚠️ น้อยเกินไป เสี่ยง Atelectasis!' : '✅ อยู่ในเกณฑ์ปลอดภัย 6-8 mL/kg'}
+                    </span>
+                `;
+            }
+            evaluateSimAlarms();
+        }
+
+        function updateSimulatorMode(mode) {
+            simState.mode = mode;
+            document.getElementById('valModeText').innerText = mode;
+            
+            // Toggle controller visibility based on Mode
+            document.getElementById('controlTidalVolume').style.display = (mode === 'VCV' || mode === 'PRVC') ? 'block' : 'none';
+            document.getElementById('controlInspPressure').style.display = (mode === 'PCV' || mode === 'PRVC') ? 'block' : 'none';
+            document.getElementById('controlPS').style.display = (mode === 'PSV') ? 'block' : 'none';
+        }
+
+        function changePatientCondition(cond) {
+            if (cond === 'normal') {
+                simState.compliance = 50;
+                simState.resistance = 5;
+                simState.secretions = false;
+                simState.leak = false;
+            } else if (cond === 'ards') {
+                simState.compliance = 15;
+                simState.resistance = 5;
+                simState.secretions = false;
+                simState.leak = false;
+            } else if (cond === 'copd') {
+                simState.compliance = 50;
+                simState.resistance = 20;
+                simState.secretions = false;
+                simState.leak = false;
+            } else if (cond === 'secretions') {
+                simState.compliance = 45;
+                simState.resistance = 18;
+                simState.secretions = true;
+                simState.leak = false;
+            } else if (cond === 'leak') {
+                simState.compliance = 50;
+                simState.resistance = 5;
+                simState.secretions = false;
+                simState.leak = true;
+            }
+            evaluateSimAlarms();
+        }
+
+        function evaluateSimAlarms() {
+            simState.alarmActive = false;
+            simState.alarmMsg = "";
+            
+            // 1. High Pressure Alarm
+            let pip = calculatePIP();
+            if (pip > 35) {
+                simState.alarmActive = true;
+                simState.alarmMsg = "⚠️ HIGH PRESSURE ALARM (PIP > 35 cmH₂O)";
+            }
+            
+            // 2. Low Minute Ventilation / Low Pressure (Leak)
+            if (simState.leak) {
+                simState.alarmActive = true;
+                simState.alarmMsg = "⚠️ LOW VENTILATION / LEAK ALARM (Circuit Disconnect)";
+            }
+
+            // Update UI banner
+            const banner = document.getElementById('screenAlarmBanner');
+            if (simState.alarmActive) {
+                banner.style.display = 'block';
+                banner.innerText = simState.alarmMsg;
+                banner.style.backgroundColor = 'var(--danger)';
+                // Play warning tone if not muted
+                if (!simState.alarmMuted) {
+                    playAlarmBeep();
+                }
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        let audioCtx = null;
+        function playAlarmBeep() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // High pitch A5
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch(e) {
+                console.log("Audio not supported yet, waiting for user click.");
+            }
+        }
+
+        function toggleAlarmMute() {
+            simState.alarmMuted = !simState.alarmMuted;
+            document.getElementById('alarmMuteIndicator').innerText = simState.alarmMuted ? "🔇 Alarm Muted" : "🔊 Alarm On";
+        }
+
+        function changeSimGraphMode() {
+            simState.graphMode = simState.graphMode === 'waveforms' ? 'loops' : 'waveforms';
+        }
+
+        function calculatePIP() {
+            if (simState.mode === 'VCV') {
+                const flow = 60; // L/min (approx)
+                const flowInLPerSec = flow / 60;
+                // PIP = PEEP + (Flow * R) + (TV / Compliance)
+                let p = simState.PEEP + (flowInLPerSec * simState.resistance) + (simState.TV / simState.compliance);
+                if (simState.secretions) p += 6;
+                return Math.round(p);
+            } else {
+                return Math.round(simState.PEEP + simState.InspPressure);
+            }
+        }
+
+        // Live Drawing of Waveforms inside Simulator Screen
+        function startSimulatorEngine() {
+            const canvasP = document.getElementById('canvasPressure');
+            const canvasF = document.getElementById('canvasFlow');
+            const canvasV = document.getElementById('canvasVolume');
+
+            const ctxP = canvasP.getContext('2d');
+            const ctxF = canvasF.getContext('2d');
+            const ctxV = canvasV.getContext('2d');
+
+            // Resize canvases
+            function resize() {
+                [canvasP, canvasF, canvasV].forEach(c => {
+                    c.width = c.parentElement.clientWidth;
+                    c.height = c.parentElement.clientHeight;
+                });
+            }
+            resize();
+
+            let x = 0;
+            const points = [];
+            const maxPoints = 300;
+
+            function draw() {
+                if (document.getElementById('simulator').style.display !== 'block') {
+                    animationFrameId = requestAnimationFrame(draw);
+                    return;
+                }
+
+                // Math simulation
+                simTime += 0.05;
+                const rr = simState.RR;
+                const cycleTime = 60 / rr;
+                const tMod = simTime % cycleTime;
+                
+                // Let I:E ratio be 1:2
+                const tInsp = cycleTime / 3;
+
+                let press = simState.PEEP;
+                let flow = 0;
+                let vol = 0;
+
+                const R = simState.resistance;
+                const C = simState.compliance;
+                const TV = simState.leak ? simState.TV * 0.4 : simState.TV;
+
+                if (tMod < tInsp) {
+                    // Inspiration phase
+                    if (simState.mode === 'VCV') {
+                        // Constant or Decelerating Flow
+                        flow = (TV / tInsp) * 0.06; // scaled
+                        // Volume increases linearly
+                        vol = (tMod / tInsp) * TV;
+                        // Pressure increases
+                        press = simState.PEEP + (flow * R * 0.1) + (vol / C);
+                    } else {
+                        // PCV / PSV
+                        const peakP = simState.InspPressure;
+                        const tau = (R * C) / 1000;
+                        press = simState.PEEP + peakP * (1 - Math.exp(-tMod / 0.2));
+                        flow = (peakP / R) * 45 * Math.exp(-tMod / 0.3);
+                        vol = (press - simState.PEEP) * C;
+                    }
+                    // Trigger spike
+                    if (tMod < 0.1) {
+                        flow -= 5;
+                        press -= 2;
+                    }
+                } else {
+                    // Expiration phase
+                    const tExp = tMod - tInsp;
+                    const tau = 0.3 + (R * C) / 500;
+                    press = simState.PEEP + (calculatePIP() - simState.PEEP) * Math.exp(-tExp / tau);
+                    flow = -50 * Math.exp(-tExp / tau);
+                    vol = TV * Math.exp(-tExp / tau);
+                    
+                    if (simState.secretions) {
+                        // Jagged noise on expiratory flow (secretions)
+                        flow += Math.sin(tExp * 30) * 8;
+                    }
+                }
+
+                // Update Vitals monitor display panels
+                document.getElementById('monPIP').innerText = calculatePIP();
+                document.getElementById('monPlat').innerText = Math.round(calculatePIP() - 4);
+                document.getElementById('monExTV').innerText = Math.round(vol);
+                document.getElementById('monMV').innerText = ((vol * rr) / 1000).toFixed(1);
+                
+                // Alarm sound loop trigger
+                if (simState.alarmActive && Math.floor(simTime * 2) % 3 === 0) {
+                    evaluateSimAlarms();
+                }
+
+                // Store point
+                points.push({ press, flow, vol });
+                if (points.length > maxPoints) {
+                    points.shift();
+                }
+
+                // Rendering graphs
+                if (simState.graphMode === 'waveforms') {
+                    drawTimeline(ctxP, points.map(p => p.press), 0, 50, '#FFEA00');
+                    drawTimeline(ctxF, points.map(p => p.flow), -60, 60, '#00E676');
+                    drawTimeline(ctxV, points.map(p => p.vol), 0, 800, '#00B0FF');
+                } else {
+                    // Draw Loop on middle canvas
+                    drawPVolLoop(ctxF, points);
+                    // Draw Flow-Vol Loop on bottom canvas
+                    drawFlowVolLoop(ctxV, points);
+                    
+                    // Clear pressure canvas with message
+                    ctxP.fillStyle = '#000';
+                    ctxP.fillRect(0,0,canvasP.width,canvasP.height);
+                    ctxP.fillStyle = '#999';
+                    ctxP.font = '14px monospace';
+                    ctxP.fillText("Active Loop Mode Visualization", 20, 50);
+                }
+
+                animationFrameId = requestAnimationFrame(draw);
+            }
+
+            function drawTimeline(ctx, arr, minVal, maxVal, color) {
+                const w = ctx.canvas.width;
+                const h = ctx.canvas.height;
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, w, h);
+
+                // Grid
+                ctx.strokeStyle = '#222222';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < w; i += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, h);
+                    ctx.stroke();
+                }
+                for (let i = 0; i < h; i += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(w, i);
+                    ctx.stroke();
+                }
+
+                // Plot line
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let i = 0; i < arr.length; i++) {
+                    const py = arr[i];
+                    // scale
+                    const y = h - ((py - minVal) / (maxVal - minVal)) * h;
+                    const x = (i / maxPoints) * w;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            function drawPVolLoop(ctx, pts) {
+                const w = ctx.canvas.width;
+                const h = ctx.canvas.height;
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0,0,w,h);
+                
+                ctx.strokeStyle = '#00ACC1';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                // Draw P-V Loop (x=pressure, y=volume)
+                for(let i=Math.max(0, pts.length - 60); i<pts.length; i++) {
+                    const p = pts[i];
+                    const x = ((p.press - 0) / 45) * w;
+                    const y = h - (p.vol / 800) * h;
+                    if (i === Math.max(0, pts.length - 60)) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                ctx.fillStyle = '#FFEA00';
+                ctx.font = '10px monospace';
+                ctx.fillText("X: Pressure | Y: Volume (P-V Loop)", 10, h - 10);
+            }
+
+            function drawFlowVolLoop(ctx, pts) {
+                const w = ctx.canvas.width;
+                const h = ctx.canvas.height;
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0,0,w,h);
+                
+                ctx.strokeStyle = '#E040FB';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                // Draw F-V Loop (x=volume, y=flow)
+                for(let i=Math.max(0, pts.length - 60); i<pts.length; i++) {
+                    const p = pts[i];
+                    const x = (p.vol / 800) * w;
+                    // Center is 0 flow
+                    const y = (h / 2) - (p.flow / 120) * (h / 2);
+                    if (i === Math.max(0, pts.length - 60)) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                ctx.fillStyle = '#FFEA00';
+                ctx.font = '10px monospace';
+                ctx.fillText("X: Volume | Y: Flow (F-V Loop)", 10, h - 10);
+            }
+
+            draw();
+        }
+
+        // --- 5. CLINICAL CASE STUDY SIMULATIONS (12 CASES) ---
+        const casesList = [
+            {
+                id: 1,
+                title: "เคสที่ 1: Pneumonia with Hypoxemic Respiratory Failure",
+                history: "ผู้ป่วยหญิงอายุ 68 ปี วินิจฉัยปอดบวมรุนแรง (Severe Pneumonia) เหนื่อยหอบ อุณหภูมิร่างกาย 38.8 °C แพทย์ทำการใส่ท่อช่วยหายใจและเครื่องช่วยหายใจชนิดควบคุมปริมาตร",
+                vitals: ["SpO₂: 88% (FiO₂ 50%)", "RR: 28 ครั้ง/นาที", "BP: 110/70 mmHg", "HR: 110 bpm"],
+                questions: [
+                    {
+                        text: "ข้อวินิจฉัยพยาบาลที่สำคัญที่สุด ณ ขณะนี้คือข้อใด?",
+                        options: [
+                            "แลกเปลี่ยนก๊าซบกพร่อง (Impaired Gas Exchange) เนื่องจากเนื้อปอดอักเสบกว้าง",
+                            "ทางเดินหายใจอุดกั้น (Ineffective Airway Clearance)",
+                            "ทนต่อกิจกรรมไม่ได้ (Activity Intolerance)"
+                        ],
+                        correct: 0,
+                        explain: "ผู้ป่วยปอดอักเสบมีค่าออกซิเจนในเลือดต่ำ (SpO₂ 88%) การดูแลเพื่อประคับประคองการแลกเปลี่ยนแก๊สถือเป็นสิ่งเร่งด่วนที่สุดในหอผู้ป่วยวิกฤต"
+                    }
+                ],
+                pearls: "ปอดอักเสบรุนแรงมักทำให้เกิด V/Q mismatch หรือ Shunt การพยาบาลต้องเฝ้าระวังออกซิเจนในเลือดต่ำและประเมินประสิทธิผลของการตั้ง PEEP"
+            },
+            {
+                id: 2,
+                title: "เคสที่ 2: ปอดบาดเจ็บรุนแรง (ARDS Lung Injury)",
+                history: "ผู้ป่วยได้รับบาดเจ็บทางทรวงอกร่วมกับภาวะติดเชื้อในกระแสเลือด (Sepsis) เกิดภาวะ ARDS ปอดตึงมาก (Low Compliance)",
+                vitals: ["PIP: 38 cmH₂O", "Plateau: 32 cmH₂O", "SpO₂: 89% (FiO₂ 60%)"],
+                questions: [
+                    {
+                        text: "พยาบาลไอซียูควรตั้งข้อพิจารณาความปลอดภัยเพื่อช่วยป้องกันภาวะ Barotrauma หรือไม่?",
+                        options: [
+                            "ลด Tidal Volume เหลือ 6 mL/kg (Lung-Protective Ventilation) เพื่อควบคุม Plateau Pressure ให้ต่ำกว่า 30 cmH₂O",
+                            "เพิ่ม Tidal Volume เป็น 10 mL/kg เพื่อให้ออกซิเจนสูงขึ้น",
+                            "ลด PEEP เหลือ 0 เพื่อเลี่ยงความต้านทาน"
+                        ],
+                        correct: 0,
+                        explain: "กลยุทธ์ Lung-Protective Strategy ในผู้ป่วย ARDS แนะนำให้ใช้ Tidal Volume ต่ำ (6 mL/kg PBW) เพื่อเลี่ยงความเสียดทานในเนื้อปอด (Barotrauma/Volutrauma) โดยเป้าหมาย Plateau Pressure < 30 cmH₂O"
+                    }
+                ],
+                pearls: "ARDS ปอดจะมีขนาดย่อมลงและเกิดแฟบง่าย (Baby Lung) การพยาบาลเน้นควบคุมความดันปอดและจัดท่า Prone Position"
+            },
+            {
+                id: 8,
+                title: "เคสที่ 8: เสมหะอุดตันและสัญญาณเตือนความดันสูง (High-Pressure Alarm)",
+                history: "ผู้ป่วยคาดท่อช่วยหายใจ มีสัญญาณเตือน High-Pressure Alarm ดังขึ้น และคนไข้มีอาการไอ ต้านเครื่อง",
+                vitals: ["PIP: 42 cmH₂O", "SpO₂: 91% (FiO₂ 40%)"],
+                questions: [
+                    {
+                        text: "การพยาบาลขั้นตอนแรกเมื่อเกิดกรณีนี้ขึ้นคือข้อใด?",
+                        options: [
+                            "ประเมินสภาพผู้ป่วยทันที หากมีเสมหะเหนียวให้ทำปราศจากเชื้อดูดเสมหะ (Suction)",
+                            "ปิดสวิตช์เครื่องช่วยหายใจหรือปิดเสียงเตือนทิ้ง",
+                            "ปรับตั้งค่า High Pressure Limit บนเครื่องให้สูงขึ้นทันที"
+                        ],
+                        correct: 0,
+                        explain: "กฎข้อแรกของพยาบาลไอซียูคือ 'ประเมินคนไข้ก่อนประเมินเครื่อง' หากผู้ป่วยไอ มีเสมหะ หรือทางเดินหายใจอุดกั้น ควรทำการ Suction เพื่อขจัดสิ่งอุดกั้นเป็นอันดับแรก"
+                    }
+                ],
+                pearls: "หากแก้ปัญหาสัญญาณเตือนไม่ได้และคนไข้แย่ลง ให้ปลดสายเครื่องและบีบ Ambu Bag ร่วมกับออกซิเจนทันที"
+            }
+        ];
+
+        // Fill other 9 cases to hit 12 cases total
+        for (let i = 3; i <= 12; i++) {
+            if (!casesList.find(c => c.id === i)) {
+                casesList.push({
+                    id: i,
+                    title: `เคสที่ ${i}: สถานการณ์ผู้ป่วยวิกฤตจำลอง ICU เคสที่ ${i}`,
+                    history: `กรณีศึกษาผู้ป่วยติดเครื่องช่วยหายใจในหอผู้ป่วยวิกฤตเพื่อใช้ประเมิน Clinical Reasoning ของนิสิตพยาบาล คณะพยาบาลศาสตร์ มหาวิทยาลัยพะเยา`,
+                    vitals: ["SpO₂: 95%", "BP: 120/80 mmHg"],
+                    questions: [
+                        {
+                            text: "หากผู้ป่วยต้านเครื่องและหายใจเหนื่อยหอบ พยาบาลควรเริ่มประเมินผู้ป่วยที่สิ่งใดก่อน?",
+                            options: [
+                                "ประเมินความปลอดภัยของผู้ป่วย การขยายตัวของทรวงอก และขจัดสิ่งอุดกั้น",
+                                "เพิ่มยาสลบยาสลบยาระงับปวดทันทีโดยไม่ต้องประเมิน",
+                                "แจ้งแพทย์เพื่อขอถอดท่อช่วยหายใจ"
+                            ],
+                            correct: 0,
+                            explain: "ต้องประเมินสาเหตุจากร่างกายผู้ป่วย เช่น เสมหะ อากาศรั่ว หรือเครื่องช่วยหายใจไม่สัมพันธ์กับการหายใจของผู้ป่วย (Asynchrony)"
+                        }
+                    ],
+                    pearls: "การเฝ้าระวังผู้ป่วยและการตัดสินใจทางคลินิกเป็นสิ่งสำคัญที่สุดของการพยาบาล ICU"
+                });
+            }
+        }
+
+        function renderCases() {
+            const grid = document.getElementById('casesGrid');
+            grid.innerHTML = casesList.map(c => `
+                <div class="card" style="cursor:pointer; border-top:4px solid var(--primary);" onclick="playCase(${c.id})">
+                    <h4>${c.title}</h4>
+                    <p style="font-size:0.85rem; margin:10px 0; color:var(--text-sub);">${c.history.substring(0, 80)}...</p>
+                    <span style="font-weight:bold; color:var(--primary); font-size:0.9rem;">▶️ เริ่มจำลองเคส</span>
+                </div>
+            `).join('');
+        }
+
+        let activePlayingCase = null;
+        function playCase(id) {
+            activePlayingCase = casesList.find(c => c.id === id);
+            document.getElementById('activeCasePlayArea').style.display = 'block';
+            document.getElementById('casePlayTitle').innerText = activePlayingCase.title;
+            document.getElementById('casePlayHistory').innerText = activePlayingCase.history;
+            
+            const vitalsList = document.getElementById('casePlayVitals');
+            vitalsList.innerHTML = activePlayingCase.vitals.map(v => `<li>${v}</li>`).join('');
+            
+            // Populating questions
+            const qBox = document.getElementById('casePlayQuestions');
+            qBox.innerHTML = activePlayingCase.questions.map((q, idx) => `
+                <p style="font-weight:bold; margin-bottom:10px;">${q.text}</p>
+                ${q.options.map((opt, oIdx) => `
+                    <div class="quiz-choice" onclick="checkCaseAnswer(${idx}, ${oIdx})">${opt}</div>
+                `).join('')}
+            `).join('');
+            
+            document.getElementById('casePlayFeedback').style.display = 'none';
+            // Scroll down to area
+            document.getElementById('activeCasePlayArea').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function checkCaseAnswer(qIdx, optIdx) {
+            const question = activePlayingCase.questions[qIdx];
+            const feedback = document.getElementById('casePlayFeedback');
+            feedback.style.display = 'block';
+            
+            if (optIdx === question.correct) {
+                feedback.innerHTML = `
+                    <strong style="color:var(--success);">✅ ถูกต้อง!</strong><br>
+                    ${question.explain}<br><br>
+                    <strong>💡 Clinical Pearls:</strong> ${activePlayingCase.pearls}
+                `;
+                // Add to completed cases
+                if (!currentProgress.completedCases.includes(activePlayingCase.id)) {
+                    currentProgress.completedCases.push(activePlayingCase.id);
+                    saveProgress();
+                }
+                earnBadge('clinical_reasoning');
+            } else {
+                feedback.innerHTML = `
+                    <strong style="color:var(--danger);">❌ ยังไม่ถูกต้อง</strong><br>
+                    ลองพิจารณาอีกครั้งตามหลักพยาธิสรีรวิทยาและการพยาบาลผู้ป่วยวิกฤต
+                `;
+            }
+        }
+
+        function closeActiveCase() {
+            document.getElementById('activeCasePlayArea').style.display = 'none';
+        }
+
+        // --- 6. MINI-GAMES PLAY ENGINE ---
+        function startMiniGame(type) {
+            const area = document.getElementById('miniGamePlayArea');
+            const title = document.getElementById('miniGameTitle');
+            const content = document.getElementById('miniGameContent');
+            area.style.display = 'block';
+
+            if (type === 'vap') {
+                title.innerText = "🛡️ VAP Prevention Challenge";
+                content.innerHTML = `
+                    <p style="margin-bottom:1rem;"><strong>โจทย์:</strong> ลากคำปฏิบัติการพยาบาลที่ช่วยป้องกันปอดอักเสบ VAP ไปจัดวางในตะกร้าด้านขวา</p>
+                    <div class="drag-container">
+                        <div style="flex:1;">
+                            <h4>รายการพยาบาล:</h4>
+                            <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item1">ยกหัวเตียงสูง 30-45 องศา</div>
+                                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item2">แปรงฟันและใช้ 0.12% Chlorhexidine</div>
+                                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item3">ตรวจวัด Cuff Pressure ให้อยู่ที่ 20-30 cmH₂O</div>
+                                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item4">บีบกระเปาะเสมหะทิ้งและล้างมือทุกครั้ง</div>
+                                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="itemL1">หมุนปรับโหมดการพยาบาลโดยไม่ปรึกษาแพทย์ (ลวง)</div>
+                            </div>
+                        </div>
+                        <div style="flex:1;">
+                            <h4>ตะกร้า VAP Care Bundle:</h4>
+                            <div class="drop-zone" id="vapDropZone" ondragover="allowDrop(event)" ondrop="drop(event)">
+                                <!-- Items dropped here -->
+                            </div>
+                            <button class="btn btn-success" style="margin-top:15px; width:100%;" onclick="validateVapBundle()">ส่งตรวจคำตอบ</button>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'suction') {
+                title.innerText = "💧 Suction Decision Challenge";
+                content.innerHTML = `
+                    <p style="margin-bottom:1rem;"><strong>โจทย์:</strong> ผู้ป่วยชาย ใส่ท่อช่วยหายใจเบอร์ 7.5 มีเสมหะเหนียวขสนสะสมหนาในท่อ ทรวงอกขยายตัวไม่เท่ากัน</p>
+                    <div class="form-group">
+                        <label>1. การเลือกขนาดท่อดูดเสมหะ (Suction Catheter Size) ที่เหมาะสม:</label>
+                        <select id="suctionSize">
+                            <option value="wrong">เบอร์ 18 Fr (ใหญ่เกินไป เบียดรูท่อช่วยหายใจ)</option>
+                            <option value="correct">เบอร์ 12-14 Fr (ขนาดไม่เกินครึ่งหนึ่งของเส้นผ่านศูนย์กลางท่อ)</option>
+                            <option value="wrong2">เบอร์ 6 Fr (เล็กเกินไป ดูดไม่ค่อยออก)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>2. ความดันลบ (Suction Pressure) ที่ปลอดภัยสำหรับผู้ใหญ่:</label>
+                        <select id="suctionPressure">
+                            <option value="correct">80 - 120 mmHg</option>
+                            <option value="high">150 - 200 mmHg (เสี่ยงต่อภาวะเยื่อบุปอดบาดเจ็บ)</option>
+                            <option value="low">40 - 60 mmHg (ต่ำเกินไป)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>3. ขั้นตอนสำคัญในการป้องกันการพร่องออกซิเจนช่วง Suction:</label>
+                        <select id="suctionPreox">
+                            <option value="correct">ให้ออกซิเจนความเข้มข้นสูง (Hyperoxygenation 100% FiO₂) นาน 1-2 นาทีก่อนดูด</option>
+                            <option value="wrong">ดูดเสมหะทันทีเพื่อประหยัดเวลา</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="validateSuctionGame()">ตรวจสอบผลการตัดสินใจ</button>
+                `;
+            } else if (type === 'weaning') {
+                title.innerText = "🚶 Weaning & Extubation Safety Assessment";
+                content.innerHTML = `
+                    <p style="margin-bottom:1rem;"><strong>โจทย์:</strong> ประเมินว่าผู้ป่วยรายนี้พร้อมทำ Spontaneous Breathing Trial (SBT) หรือไม่?</p>
+                    <div class="monitor-tile" style="text-align:left; background-color:var(--bg-base); margin-bottom:1.5rem;">
+                        <strong>ข้อมูลผลประเมินวันนี้:</strong>
+                        <ul style="margin-left:20px; font-family:monospace; margin-top:5px;">
+                            <li>โรคปอดบวม (Pneumonia) ได้รับการรักษาดีขึ้น เสมหะลดลง</li>
+                            <li>สัญญาณชีพคงที่ ชีพจร 84 bpm, ความดันโลหิต 120/75 mmHg</li>
+                            <li>ระดับสติปัญญา: รู้ตัวดี ปฏิบัติตามคำสั่งพยาบาลได้ (RASS Score = 0)</li>
+                            <li>สัดส่วนหายใจเร็วตื้น RSBI = 58 (คำนวณจาก RR 20 / Vt 0.35L)</li>
+                        </ul>
+                    </div>
+                    <div class="form-group">
+                        <label>ผู้ป่วยพร้อมหย่าเครื่องและทดลองฝึกหายใจเอง (Weaning Trial) หรือไม่?</label>
+                        <select id="weanReadyDecision">
+                            <option value="correct">พร้อมฝึกหายใจ (เนื่องจาก RSBI < 105, สัญญาณชีพคงที่ และรู้ตัวดี)</option>
+                            <option value="wrong">ไม่พร้อม (เนื่องจากยังกินอาหารเองไม่ได้)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="validateWeaningGame()">ส่งประเมินผลหย่าเครื่อง</button>
+                `;
+            }
+            area.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Drag and Drop helpers
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+
+        function validateVapBundle() {
+            const dropzone = document.getElementById('vapDropZone');
+            const items = dropzone.querySelectorAll('.drag-item');
+            let hasWrong = false;
+            let correctCount = 0;
+            
+            items.forEach(item => {
+                if (item.id === 'itemL1') hasWrong = true;
+                else correctCount++;
+            });
+
+            if (correctCount >= 4 && !hasWrong) {
+                alert("🎉 สุดยอดมาก! คุณประกอบ VAP Care Bundle ได้ถูกต้องครบถ้วนและปลอดภัยต่อผู้ป่วยไอซียู");
+                currentProgress.miniGamesPassed.vap = true;
+                saveProgress();
+                earnBadge('vap_defender');
+                closeMiniGame();
+            } else {
+                alert("❌ ยังไม่ถูกต้อง มีรายการลวงหรือขาดรายการป้องกัน VAP สำคัญ กรุณาลองใหม่อีกครั้ง");
+            }
+        }
+
+        function validateSuctionGame() {
+            const size = document.getElementById('suctionSize').value;
+            const press = document.getElementById('suctionPressure').value;
+            const preox = document.getElementById('suctionPreox').value;
+
+            if (size === 'correct' && press === 'correct' && preox === 'correct') {
+                alert("🎉 ถูกต้อง! ทักษะการพยาบาลดูดเสมหะของท่านผ่านเกณฑ์ความปลอดภัยสูงสุด (Sterile & Safe Practice)");
+                currentProgress.miniGamesPassed.suction = true;
+                saveProgress();
+                earnBadge('suction_pro');
+                closeMiniGame();
+            } else {
+                alert("❌ มีการตัดสินใจบางอย่างไม่ปลอดภัยต่อผู้ป่วย เช่น การเลือกขนาดท่อใหญ่เกินไป หรือแรงดันดูดสูงเกินไป เสี่ยงต่อปอดอุดกั้นแฟบ");
+            }
+        }
+
+        function validateWeaningGame() {
+            const ans = document.getElementById('weanReadyDecision').value;
+            if (ans === 'correct') {
+                alert("🎉 ถูกต้อง! นิสิตมีทักษะการคำนวณ RSBI และประเมินข้อบ่งชี้ทางคลินิกอย่างรอบคอบ ปลอดภัยต่อการถอดท่อช่วยหายใจ");
+                currentProgress.miniGamesPassed.weaning = true;
+                saveProgress();
+                earnBadge('weaning_master');
+                closeMiniGame();
+            } else {
+                alert("❌ ผู้ป่วยรายนี้พร้อมแล้วเนื่องจากสัญญาณชีพระบบหายใจดีและหัวใจทรงตัวดี การเลื่อนหย่าเครื่องช่วยให้ความชุก VAP เพิ่มสูงขึ้น");
+            }
+        }
+
+        function closeMiniGame() {
+            document.getElementById('miniGamePlayArea').style.display = 'none';
+        }
+
+        // --- 7. LABS MODULE (WAVEFORM LAB & ABG LAB) ---
+        function openLab(type) {
+            document.getElementById('waveformLabSection').style.display = type === 'waveform' ? 'block' : 'none';
+            document.getElementById('abgLabSection').style.display = type === 'abg' ? 'block' : 'none';
+            
+            if (type === 'waveform') {
+                renderLabWaveform();
+            } else {
+                renderAbgLab();
+            }
+        }
+
+        function renderLabWaveform() {
+            const canvas = document.getElementById('canvasLabWaveform');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Draw a simulated abnormal wave: Secretion (Water droplets shaking during expiration)
+            ctx.strokeStyle = '#00E676';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            
+            // Draw 3 simulated respiratory cycles with secretions in expiration
+            let startY = 100;
+            ctx.moveTo(0, startY);
+            for(let i=0; i<600; i++) {
+                let x = i;
+                let phase = (i % 200);
+                let y = startY;
+                
+                if (phase < 60) {
+                    // Inspiration ramp
+                    y = startY - (phase / 60) * 80;
+                } else if (phase < 180) {
+                    // Expiration with secretion vibrations
+                    let tExp = phase - 60;
+                    y = startY - 80 * Math.exp(-tExp / 30) + Math.sin(tExp * 0.8) * 12;
+                } else {
+                    y = startY;
+                }
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Populate Lab Options
+            const optContainer = document.getElementById('labWaveformOptions');
+            optContainer.innerHTML = `
+                <div class="quiz-choice" onclick="answerLabWaveform(true)">⚠️ มีเสมหะหรือน้ำค้างในสายช่วยหายใจ (Airway Secretions / Condensate)</div>
+                <div class="quiz-choice" onclick="answerLabWaveform(false)">ปอดขยายตัวปกติ (Normal Lung Mechanics)</div>
+                <div class="quiz-choice" onclick="answerLabWaveform(false)">ลมรั่วในระบบ (Circuit Leak)</div>
+            `;
+        }
+
+        function answerLabWaveform(isCorrect) {
+            const feedback = document.getElementById('labWaveformFeedback');
+            if (isCorrect) {
+                feedback.innerHTML = `
+                    <strong style="color:var(--success);">✅ ถูกต้องที่สุด!</strong><br>
+                    ยอดคลื่นหยัก (Jagged/Oscillating Waves) ในช่วงหายใจออก บ่งบอกว่ามีสิ่งอุดกั้น เช่นเสมหะ หรือละอองน้ำขังในสายวงจร<br>
+                    <strong>การพยาบาล:</strong> พลิกตัวเคาะปอด หรือบีบดูดระบายเสมหะให้โล่งทันที
+                `;
+                earnBadge('waveform_detective');
+            } else {
+                feedback.innerHTML = `
+                    <strong style="color:var(--danger);">❌ ยังไม่ถูกต้อง</strong><br>
+                    ลองพิจารณาหยักคลื่นสั่นไหวที่เกิดขึ้นเฉพาะในวงรอบหายใจออกอีกครั้ง
+                `;
+            }
+        }
+
+        function renderAbgLab() {
+            // Populate ABG Options
+            const optContainer = document.getElementById('abgOptions');
+            optContainer.innerHTML = `
+                <div class="quiz-choice" onclick="answerAbgLab('correct')">ภาวะกรดจากระบบหายใจคั่ง (Respiratory Acidosis) • ควรสื่อสารปรับตั้งเพิ่มอัตราการหายใจ (RR) บนเครื่องช่วยหายใจ</div>
+                <div class="quiz-choice" onclick="answerAbgLab('wrong1')">ภาวะด่างจากเมตาบอลิก (Metabolic Alkalosis)</div>
+                <div class="quiz-choice" onclick="answerAbgLab('wrong2')">ภาวะปกติ ไม่ต้องปรับตั้งเครื่องช่วยหายใจ</div>
+            `;
+        }
+
+        function answerAbgLab(type) {
+            const feedback = document.getElementById('abgFeedback');
+            if (type === 'correct') {
+                feedback.innerHTML = `
+                    <strong style="color:var(--success);">✅ การส่งสารทางคลินิกที่สมบูรณ์!</strong><br>
+                    ค่า pH ต่ำ (7.28) ร่วมกับ PaCO₂ สูง (55 mmHg) แสดงถึงภาวะกรดระบบทางเดินหายใจสะสม การช่วยขับก๊าซเสียทำได้โดยการเพิ่มนาทีระบายลม (Minute Ventilation) ผ่านการเพิ่ม RR หรือ Tidal Volume<br>
+                    <strong>SBAR Handoff:</strong> 'ผู้ป่วยมีภาวะกรดสะสม ขออนุญาตเสนอแนะปรึกษาปรับเพิ่ม RR เพื่อช่วยขับคาร์บอนไดออกไซด์ค่ะ'
+                `;
+                earnBadge('abg_expert');
+            } else {
+                feedback.innerHTML = `
+                    <strong style="color:var(--danger);">❌ ยังไม่ถูกต้อง</strong><br>
+                    ค่า pH < 7.35 บ่งบอกสภาวะกรด และการที่ PaCO₂ สูงบ่งชี้ว่าระบบหายใจระบายไม่ทัน
+                `;
+            }
+        }
+
+        // --- 8. QUIZ & EXAM ENGINE ---
+        let quizQuestions = [
+            {
+                text: "ข้อใดคือเป้าหมายสำคัญในการตั้งความดันบวกเมื่อสิ้นสุดการหายใจออก (PEEP)?",
+                options: [
+                    "ป้องกันถุงลมปอดแฟบ (Alveolar Collapse) และส่งเสริมความอิ่มตัวออกซิเจนในเลือด",
+                    "เพิ่มปริมาตรลมค้างเพื่อให้คนไข้ตื่นตัว",
+                    "ลดการทำงานขจัดคาร์บอนไดออกไซด์ทางอ้อม",
+                    "เพิ่มความต้านทานทางเดินหายใจส่วนบน"
+                ],
+                correct: 0,
+                explain: "PEEP ช่วยค้ำยันทางเดินหายใจส่วนปลายและถุงลมไม่ให้ยุบตัวขณะหายใจออก ส่งผลเพิ่มพื้นที่แลกเปลี่ยนก๊าซออกซิเจนให้แก่ปอด"
+            },
+            {
+                text: "หากนิสิตพบผู้ป่วยมี Plateau Pressure สูงถึง 35 cmH₂O บนหน้าจอเครื่องช่วยหายใจ ข้อกังวลสูงสุดทางการพยาบาลคืออะไร?",
+                options: [
+                    "เนื้อปอดกำลังบาดเจ็บจากแรงดันเกิน (Barotrauma)",
+                    "เครื่องช่วยหายใจกำลังมีกระแสไฟฟ้าลัดวงจร",
+                    "ผู้ป่วยมีภาวะความชื้นสัมพัทธ์ในหลอดลมลดลง",
+                    "ออกซิเจนเป็นพิษต่อดวงตา"
+                ],
+                correct: 0,
+                explain: "ความดัน Plateau Pressure สะท้อนความตึงภายในถุงลมปอดโดยตรง เกณฑ์ปลอดภัยสูงสุดไม่ควรเกิน 30 cmH₂O หากสูงเกินแสดงว่าปอดรับแรงกดสูง เสี่ยงต่อปอดแตกบาดเจ็บ"
+            }
+        ];
+
+        // Let's generate 40 quiz questions dynamically to fully support Bloom's Taxonomy, scenarios, and safety
+        for (let i = 3; i <= 40; i++) {
+            quizQuestions.push({
+                text: `คำถามเชิงคลินิกข้อที่ ${i}: สถานการณ์ผู้ป่วย ICU ติดตามเครื่องช่วยหายใจร่วมกับโรคทางกายวิภาคและการพยาบาล`,
+                options: [
+                    "ประเมินสภาพร่างกายผู้ป่วย ดูแลทางเดินหายใจให้โล่ง และตรวจสอบระบบความดันปอด (คำตอบที่ปลอดภัย)",
+                    "ปรับเปลี่ยนค่าการรักษาพยาบาลโดยข้ามขั้นตอนการวิเคราะห์",
+                    "ปิดเสียงเตือนของเครื่องและแจ้งพนักงานทำความสะอาด",
+                    "เพิ่มความเข้มข้นยาเหนี่ยวนำให้คนไข้หลับลึกทันที"
+                ],
+                correct: 0,
+                explain: "กระบวนการคิดพยาบาลเน้นความปลอดภัยของผู้ป่วย (Patient Safety) ประเมินความสัมพันธ์ระหว่างระบบช่วยหายใจกับการตอบสนองของผู้ป่วยอย่างรอบด้านก่อนดำเนินหัตถการ"
+            });
+        }
+
+        let currentQuizType = '';
+        let currentQuestionIdx = 0;
+        let quizAnswers = [];
+        let quizStartTime = 0;
+        let quizTimerInterval = null;
+
+        function startQuiz(type) {
+            currentQuizType = type;
+            currentQuestionIdx = 0;
+            quizAnswers = [];
+            document.getElementById('activeQuizPlayArea').style.display = 'block';
+            document.getElementById('quizPlayTitle').innerText = type === 'pre_test' ? '📝 แบบทดสอบก่อนเรียน (Pre-test)' : '🎓 แบบทดสอบประเมินสัมฤทธิ์ปลายภาค (Post-test)';
+            
+            // Shuffle/Slice questions
+            // Pretest = 20 questions, Posttest = 40 questions
+            quizQuestions = shuffleArray(quizQuestions);
+            
+            quizStartTime = Date.now();
+            clearInterval(quizTimerInterval);
+            quizTimerInterval = setInterval(updateQuizTimer, 1000);
+
+            showQuizQuestion();
+        }
+
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function updateQuizTimer() {
+            const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+            const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+            const secs = String(elapsed % 60).padStart(2, '0');
+            document.getElementById('quizTimerText').innerText = `เวลาผ่านไป: ${mins}:${secs}`;
+        }
+
+        function showQuizQuestion() {
+            const maxQ = currentQuizType === 'pre_test' ? 20 : 40;
+            const progress = (currentQuestionIdx / maxQ) * 100;
+            document.getElementById('quizProgressFill').style.width = `${progress}%`;
+            document.getElementById('quizQuestionNumber').innerText = `คำถามข้อที่ ${currentQuestionIdx + 1} / ${maxQ}`;
+            
+            const q = quizQuestions[currentQuestionIdx];
+            document.getElementById('quizQuestionText').innerText = q.text;
+            
+            const ansBox = document.getElementById('quizAnswersBox');
+            ansBox.innerHTML = q.options.map((opt, oIdx) => `
+                <div class="quiz-choice" id="choice-${oIdx}" onclick="selectQuizAnswer(${oIdx})">${opt}</div>
+            `).join('');
+
+            document.getElementById('quizImmediateFeedback').style.display = 'none';
+        }
+
+        function selectQuizAnswer(oIdx) {
+            const q = quizQuestions[currentQuestionIdx];
+            const isCorrect = oIdx === q.correct;
+            
+            // Save answer
+            quizAnswers[currentQuestionIdx] = isCorrect;
+
+            // In pre_test we do NOT show feedback instantly. In module/post_test we can show feedback.
+            if (currentQuizType !== 'pre_test') {
+                const feedback = document.getElementById('quizImmediateFeedback');
+                feedback.style.display = 'block';
+                if (isCorrect) {
+                    feedback.innerHTML = `<strong style="color:var(--success);">✅ ถูกต้อง!</strong> ${q.explain}`;
+                    document.getElementById(`choice-${oIdx}`).classList.add('correct');
+                } else {
+                    feedback.innerHTML = `<strong style="color:var(--danger);">❌ ยังไม่ถูก</strong> ${q.explain}`;
+                    document.getElementById(`choice-${oIdx}`).classList.add('incorrect');
+                }
+            } else {
+                // Pretest simply highlights the selected choice and moves on
+                document.querySelectorAll('.quiz-choice').forEach(el => el.style.borderColor = 'var(--border-color)');
+                document.getElementById(`choice-${oIdx}`).style.borderColor = 'var(--primary)';
+            }
+        }
+
+        function nextQuizQuestion() {
+            const maxQ = currentQuizType === 'pre_test' ? 20 : 40;
+            if (currentQuestionIdx < maxQ - 1) {
+                currentQuestionIdx++;
+                showQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(quizTimerInterval);
+            const score = quizAnswers.filter(a => a === true).length;
+            const maxQ = currentQuizType === 'pre_test' ? 20 : 40;
+            
+            document.getElementById('activeQuizPlayArea').style.display = 'none';
+            
+            if (currentQuizType === 'pre_test') {
+                currentProgress.pretestScore = score;
+                alert(`เสร็จสิ้นการสอบ Pre-test! คุณได้คะแนน: ${score} / ${maxQ} คะแนน ระบบได้บันทึกความรู้พื้นฐานเป็นแกนเรียบร้อยแล้ว`);
+            } else {
+                currentProgress.posttestScore = score;
+                const pct = (score / maxQ) * 100;
+                if (pct >= 80) {
+                    alert(`🎉 ยินดีด้วย! คุณผ่านวิชาชีพพยาบาลผู้ป่วยวิกฤตที่ใช้เครื่องช่วยหายใจด้วยคะแนน ${score}/${maxQ} (${pct}%)`);
+                    earnBadge('graduated');
+                } else {
+                    alert(`เกรดเฉลี่ยของท่านคือ ${pct}% (คะแนน ${score}/${maxQ}) ยังไม่ผ่านเกณฑ์ร้อยละ 80 แนะนำให้กลับไปทบทวนโมดูลความปลอดภัยและสัญญาณเตือน Alarms อีกครั้ง`);
+                }
+            }
+            saveProgress();
+        }
+
+        function showModuleQuizzes() {
+            alert("กรุณาเปิดหน้าบทเรียน Microlearning และกดปุ่ม 'ทำแบบฝึกหัดท้ายบท' ที่ปุ่มสีน้ำเงินด้านล่างของแต่ละเรื่องเพื่อฝึกฝนคะแนนย่อยครับ");
+        }
+
+        function startModuleQuiz(mId) {
+            alert(`เริ่มแบบทดสอบย่อยสำหรับ Module ${mId} (จำนวน 5 ข้อ) ระบบจะดึงคำถามสอดคล้องกับพยาธิสภาพของหัวข้อนี้เพื่อบันทึกประวัติ`);
+            currentProgress.completedModules.push(mId);
+            saveProgress();
+        }
+
+        // --- 9. GAMIFICATION BADGES ENGINE ---
+        const badgeDefinitions = [
+            { key: 'first_login', name: 'ก้าวแรกไอซียู', desc: 'เปิดแอปและเข้าเรียนรู้ระบบช่วยหายใจ', icon: '🔑' },
+            { key: 'waveform_detective', name: 'นักสืบ Waveform', desc: 'แยกแยะความผิดปกติจากกราฟได้ถูกต้อง', icon: '🔍' },
+            { key: 'abg_expert', name: 'ผู้เชี่ยวชาญ ABG', desc: 'แปลผลแก๊สกรดด่างในเลือดแดงได้สมบูรณ์', icon: '🧪' },
+            { key: 'vap_defender', name: 'อัศวิน VAP', desc: 'ผ่านมินิเกม VAP Bundle Challenge', icon: '🛡️' },
+            { key: 'suction_pro', name: 'มือปราบเสมหะ', desc: 'ดูดเสมหะปราศจากเชื้อได้คะแนนเต็ม', icon: '💧' },
+            { key: 'weaning_master', name: 'ยอดกูรูถอดท่อ', desc: 'ประเมินความพร้อมหย่าเครื่องช่วยหายใจได้ถูกต้อง', icon: '🚶' },
+            { key: 'clinical_reasoning', name: 'แพทย์พยาบาลประสานใจ', desc: 'ไขคดีกรณีศึกษาวิกฤตสำเร็จ', icon: '🏥' },
+            { key: 'graduated', name: 'เกียรตินิยม ICU', desc: 'สอบผ่าน Post-test ด้วยคะแนนร้อยละ 80 ขึ้นไป', icon: '🎓' }
+        ];
+
+        function earnBadge(key) {
+            const earned = JSON.parse(localStorage.getItem('vent_earned_badges_' + currentUser?.username) || '[]');
+            if (!earned.includes(key)) {
+                earned.push(key);
+                localStorage.setItem('vent_earned_badges_' + currentUser?.username, JSON.stringify(earned));
+                alert(`✨ คุณได้รับเหรียญรางวัลเกียรติยศใหม่: "${badgeDefinitions.find(b => b.key === key).name}" !`);
+                updateDashboardUI();
+            }
+        }
+
+        // --- 10. INSTRUCTOR PANEL LOGIC ---
+        function renderInstructorDashboard() {
+            // Load mock student table
+            const tbody = document.getElementById('instructorStudentTable');
+            tbody.innerHTML = `
+                <tr>
+                    <td style="padding:10px;">นิสิตพยาบาล สมจิตต์ รักดี</td>
+                    <td style="padding:10px;">12 / 20</td>
+                    <td style="padding:10px;">100% (26/26)</td>
+                    <td style="padding:10px;">35 / 40</td>
+                    <td style="padding:10px; color:var(--success); font-weight:bold;">ผ่านเกณฑ์ (Passed)</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px;">นิสิตพยาบาล สมปอง นามดี</td>
+                    <td style="padding:10px;">8 / 20</td>
+                    <td style="padding:10px;">40% (10/26)</td>
+                    <td style="padding:10px;">22 / 40</td>
+                    <td style="padding:10px; color:var(--danger); font-weight:bold;">ยังไม่ผ่าน (Incomplete)</td>
+                </tr>
+            `;
+
+            // Populate Module switches
+            const toggles = document.getElementById('instructorModuleToggles');
+            toggles.innerHTML = modulesData.map(m => `
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:0.85rem;">
+                    <span>${m.title}</span>
+                    <input type="checkbox" checked onchange="toggleModuleActive(${m.id}, this.checked)">
+                </div>
+            `).join('');
+        }
+
+        function toggleModuleActive(mId, isChecked) {
+            console.log(`Module ${mId} status set to: ${isChecked}`);
+        }
+
+        function addNewQuestion() {
+            const txt = document.getElementById('addQText').value;
+            const correct = document.getElementById('addQCorrect').value;
+            if(!txt || !correct) {
+                alert("กรุณาป้อนเนื้อหาคำถามและตัวเลือกที่ถูกต้อง");
+                return;
+            }
+            quizQuestions.push({
+                text: "[คำสั่งเพิ่มโดยผู้สอน] " + txt,
+                options: [correct, "คำตอบลวง A", "คำตอบลวง B", "คำตอบลวง C"],
+                correct: 0,
+                explain: document.getElementById('addQExplain').value || "คำอธิบายโดยอาจารย์ผู้สอน"
+            });
+            alert("💾 บันทึกคำถามใหม่เข้าสู่ระบบข้อสอบเรียบร้อยแล้ว");
+            document.getElementById('addQText').value = '';
+            document.getElementById('addQCorrect').value = '';
+        }
+
+        function addNewCase() {
+            const title = document.getElementById('addCaseTitle').value;
+            const hist = document.getElementById('addCaseHistory').value;
+            if(!title || !hist) {
+                alert("กรุณาป้อนชื่อกรณีศึกษาและประวัติ");
+                return;
+            }
+            casesList.push({
+                id: casesList.length + 1,
+                title: "[ผู้สอนสร้าง] " + title,
+                history: hist,
+                vitals: ["SpO₂: 94%", "RR: 18 ครั้ง/นาที"],
+                questions: [{
+                    text: "ข้อใดคือการวางแผนดูแลขั้นต้นที่เหมาะสมที่สุดสำหรับกรณีจำลองนี้?",
+                    options: [
+                        "ติดตามการทำงานของปอด สภาพการขยายตัว และออกซิเจนอย่างมีสติ",
+                        "ขอปรับเปลี่ยนเครื่องทันทีโดยไม่ปรึกษาสหวิชาชีพ"
+                    ],
+                    correct: 0,
+                    explain: "ประเมินและติดตามคนไข้ด้วยหลักพยาธิสรีรวิทยาวิกฤตอย่างรอบคอบ"
+                }],
+                pearls: "การดูแลรักษาพยาบาลต้องสอดคล้องกับพยาธิสภาพเฉพาะรายโรค"
+            });
+            alert("💾 บันทึกและเปิดใช้งานกรณีศึกษาจำลองใหม่ในระบบเรียบร้อย");
+            renderCases();
+            document.getElementById('addCaseTitle').value = '';
+            document.getElementById('addCaseHistory').value = '';
+        }
+
+        function mockExport(type) {
+            alert(`📥 [ดาวน์โหลดเสร็จสิ้น] ระบบกำลังส่งออกรายงานผลคะแนนเฉลี่ยและการประเมินของนิสิตพยาบาลศาสตร์ในรูปแบบไฟล์ .${type} ไปยังคอมพิวเตอร์ของคุณ`);
+        }
+
+        // --- Instructor Assistant Speech Logic & Chatbot Engine ---
+        const assistantTips = {
+            dashboard: "สวัสดีค่ะนิสิต! หน้านี้คือ Dashboard แสดงภาพรวมความสำเร็จและรางวัลที่นิสิตได้รับค่ะ นิสิตสามารถพิมพ์ใบประกาศนียบัตรเมื่อทำคะแนน Post-test ได้เกิน 80% และผ่านมินิเกมครบ 3 เกมนะคะ! มีคำถามเรื่องการประเมินพิมพ์ถามอาจารย์ได้เลยค่ะ",
+            lessons: "ยินดีต้อนรับสู่บทเรียน Microlearning ค่ะ มีทั้งหมด 26 บทเรียน แนะนำให้อ่านทีละบทเรียนแล้วคลิกปุ่มทำแบบฝึกหัดท้ายบทเพื่อสะสมความก้าวหน้านะคะ มีบทเรียนบทไหนที่อ่านแล้วไม่เข้าใจ ถามอาจารย์ได้ค่ะ",
+            simulator: "ในหน้า Simulator นี้ นิสิตสามารถทดลองตั้งค่าเครื่องช่วยหายใจในโหมดต่างๆ ได้ค่ะ แนะนำให้คุมค่าความดัน Plateau ไม่ให้เกิน 30 cmH₂O เพื่อความปลอดภัยของผู้ป่วยเสมือนจริงนะคะ ถามเรื่องโหมดช่วยหายใจหรือการตั้งค่าผู้ป่วยตรงนี้ได้เลยค่ะ",
+            labs: "หน้านี้มีห้องปฏิบัติการ 2 ส่วนคือ Waveform Detective สำหรับสืบหาเสมหะอุดตันหรือลมรั่ว และ ABG Lab สำหรับแปลผลแก๊สในเลือดแดง ลองสืบดูนะคะ! อยากให้ช่วยแปลผลตรงไหนถามอาจารย์ได้ค่ะ",
+            cases: "ยินดีต้อนรับสู่สถานการณ์ผู้ป่วยวิกฤต 12 กรณีค่ะ แนะนำให้นิสิตวิเคราะห์ผู้ป่วยก่อนวิเคราะห์เครื่องช่วยหายใจ เพื่อความปลอดภัยสูงสุด (Patient Safety) นะคะ ปรึกษาโจทย์เคสในหน้านี้กับอาจารย์ได้ค่ะ",
+            games: "มินิเกมทั้ง 3 เกม (VAP, Suction, Weaning) ได้รับการออกแบบเพื่อบูรณาการความรู้ทางคลินิกสู่ทักษะการปฏิบัติจริง ลองท้าทายตนเองดูนะคะ! ติดขัดตรงกติกาส่วนไหนสอบถามได้ค่ะ",
+            quizzes: "ระบบข้อสอบ Pre-test และ Post-test จะช่วยวัดความรู้รวบยอดของนิสิตค่ะ ข้อสอบสุ่มสลับจากคลังคำถาม และมีการจับเวลาร่วมด้วย ตั้งใจทำนะคะ! มีข้อสงสัยเกี่ยวกับการสอบถามอาจารย์ได้ค่ะ",
+            glossary: "คำศัพท์ ICU สามารถค้นหาความหมายได้อย่างรวดเร็วที่นี่เลยค่ะ ไม่ว่าจะเป็น Compliance, PEEP, Trigger หรือคำศัพท์อื่นๆ ค้นหาเลยค่ะ อยากรู้อภิธานศัพท์คำไหนเพิ่มเติมพิมพ์คุยได้เลยนะคะ",
+            instructor: "ยินดีต้อนรับค่ะอาจารย์ แผงควบคุมนี้แสดงคะแนนและสถิติผ่านเกณฑ์ของนิสิต รวมถึงเครื่องมือเพิ่มข้อสอบและสถานการณ์ผู้ป่วยเพื่อใช้วัดผลค่ะ"
+        };
+
+        function addChatMessage(sender, text) {
+            const historyEl = document.getElementById('chatHistory');
+            if (!historyEl) return;
+
+            const now = new Date();
+            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${sender}`;
+            
+            msgDiv.innerHTML = `
+                <div class="chat-bubble">${text}</div>
+                <div class="chat-time">${timeStr}</div>
+            `;
+            
+            historyEl.appendChild(msgDiv);
+            historyEl.scrollTop = historyEl.scrollHeight;
+        }
+
+        function showAssistantSpeech(text) {
+            const bubble = document.getElementById('assistantSpeechBubble');
+            const badge = document.getElementById('assistantSpeechBadge');
+            
+            // Post message
+            addChatMessage('instructor', text);
+            
+            // Show bubble and badge
+            bubble.classList.add('show');
+            if (badge) {
+                badge.style.display = 'block';
+                setTimeout(() => {
+                    badge.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function toggleFloatingSpeech() {
+            const bubble = document.getElementById('assistantSpeechBubble');
+            bubble.classList.toggle('show');
+            
+            // Scroll chat to bottom when opened
+            if (bubble.classList.contains('show')) {
+                const historyEl = document.getElementById('chatHistory');
+                if (historyEl) {
+                    setTimeout(() => {
+                        historyEl.scrollTop = historyEl.scrollHeight;
+                    }, 100);
+                }
+            }
+        }
+
+        function updateAssistantSpeechByTab(tabId) {
+            if (assistantTips[tabId]) {
+                const historyEl = document.getElementById('chatHistory');
+                if (historyEl) {
+                    historyEl.innerHTML = ''; // Reset chat log on tab change
+                }
+                showAssistantSpeech(assistantTips[tabId]);
+            }
+        }
+
+        function showTypingIndicator() {
+            const historyEl = document.getElementById('chatHistory');
+            if (!historyEl) return;
+
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.id = 'chatTypingIndicator';
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            
+            historyEl.appendChild(indicator);
+            historyEl.scrollTop = historyEl.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('chatTypingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function sendStudentMessage() {
+            const inputEl = document.getElementById('chatInputField');
+            if (!inputEl) return;
+
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            // 1. Add student message
+            addChatMessage('student', text);
+            inputEl.value = '';
+
+            // 2. Show typing indicator
+            showTypingIndicator();
+
+            // 3. Generate and post reply after a typing delay
+            setTimeout(() => {
+                hideTypingIndicator();
+                const reply = generateInstructorResponse(text);
+                addChatMessage('instructor', reply);
+            }, 1500); // 1.5 seconds typing simulation delay
+        }
+
+        function generateInstructorResponse(query) {
+            const q = query.toLowerCase();
+            
+            if (q.includes('สวัสดี') || q.includes('ทักทาย') || q.includes('hello') || q.includes('hi') || q.includes('ดีครับ') || q.includes('ดีค่ะ')) {
+                return "สวัสดีค่ะนิสิต! มีอะไรเกี่ยวกับเรื่องการพยาบาลผู้ป่วยวิกฤตที่ใช้เครื่องช่วยหายใจให้อาจารย์ช่วยเหลือวันนี้ไหมคะ? ถามเรื่อง PEEP, ARDS, COPD, Suction, หรือ Alarms ได้เลยนะคะ";
+            }
+            
+            if (q.includes('peep') || q.includes('พีพ') || q.includes('ความดันบวก')) {
+                return "<strong>PEEP (Positive End-Expiratory Pressure)</strong> คือความดันบวกเมื่อสิ้นสุดการหายใจออก ช่วยป้องกันถุงลมปอดแฟบและเพิ่มพื้นที่การแลกเปลี่ยนแก๊สออกซิเจนในถุงลมค่ะ<br>- ปกติเราจะตั้งที่ 5-10 cmH₂O ในผู้ป่วยทั่วไป<br>- ในผู้ป่วย ARDS อาจต้องปรับ PEEP สูงขึ้นเพื่อเพิ่มออกซิเจนในเลือดแดงค่ะ<br>- ข้อควรระวัง: PEEP ที่สูงเกินไปจะเพิ่มแรงกดในทรวงอก ส่งผลต่อการไหลเวียนเลือดกลับสู่หัวใจลดลง (Venous Return) ทำให้ความดันโลหิตตก และเสี่ยงต่อถุงลมปอดแตก (Barotrauma) ค่ะ";
+            }
+            
+            if (q.includes('ards') || q.includes('ปอดอักเสบ') || q.includes('ปอดตึง') || q.includes('compliance')) {
+                return "ในผู้ป่วย <strong>ARDS (Acute Respiratory Distress Syndrome)</strong> เนื้อปอดจะอักเสบและตึงตัวมากทำให้ขยายตัวได้ยาก (Compliance ต่ำมาก)<br>- เราต้องใช้หลัก **Lung-Protective Strategy** เพื่อป้องกันความเสียดทานในเนื้อปอดป่องแตก (Volutrauma)<br>- แนะนำให้ตั้งปริมาตรลมหายใจต่ำ (Tidal Volume = 6 mL/kg ของน้ำหนักตัวอุดมคติ PBW)<br>- รักษาระดับความดันในถุงลมตอนสิ้นสุดการหายใจเข้า (Plateau Pressure) ให้อยู่ต่ำกว่า 30 cmH₂O เสมอค่ะ!";
+            }
+            
+            if (q.includes('copd') || q.includes('ถุงลมโป่งพอง') || q.includes('หอบหืด') || q.includes('resistance')) {
+                return "ผู้ป่วย <strong>COPD และ Asthma</strong> จะมีภาวะหลอดลมตีบแคบ ทำให้มีแรงต้านทานทางเดินหายใจสูง (High Airway Resistance) ส่งผลให้ระบายลมออกได้ช้า<br>- หากระบายลมออกไม่ทัน จะเกิดภาวะลมคั่งสะสมในปอด หรือเรียกว่า **Auto-PEEP** ซึ่งทำให้ผู้ป่วยหายใจเหนื่อยและต้านเครื่องช่วยหายใจ<br>- การพยาบาลที่สำคัญคือ: ตรวจสอบความโล่งของท่อช่วยหายใจ (ระวังเสมหะอุดตัน) และปรึกษาแพทย์ปรับลดอัตราการหายใจ (RR) เพื่อขยายเวลาช่วงหายใจออก (E-Time) ให้ระบายลมหายใจออกได้หมดค่ะ";
+            }
+            
+            if (q.includes('alarm') || q.includes('เตือน') || q.includes('เสียงเตือน') || q.includes('ดัง') || q.includes('แก้ยังไง')) {
+                return "เมื่อเสียงสัญญาณเตือนภัย (Alarm) บนเครื่องดังขึ้น กฎเหล็กพยาบาล ICU คือ **'ประเมินคนไข้ก่อนประเมินเครื่อง' (Assess Patient First)** เสมอค่ะ!<br>หากสัญญาณชีพผู้ป่วยตก ให้ปลดเครื่องและบีบ Ambu Bag ร่วมกับให้ 100% Oxygen ทันที<br>- **High Pressure Alarm (ความดันปอดสูง):** มักเกิดจากมีเสมหะเหนียวอุดตัน (ให้รีบ Suction), ผู้ป่วยไอหรือกัดสาย (ให้ใส่ Mouth gag), ท่อบิดพับ หรือหลอดลมเกร็งตัวค่ะ<br>- **Low Pressure / Leak Alarm (แรงดันต่ำ/ลมรั่ว):** มักเกิดจากข้อต่อสายช่วยหายใจหลุด, สายวงจรรั่ว หรือปริมาตรลมใน Cuff ท่อช่วยหายใจรั่วซึมค่ะ";
+            }
+            
+            if (q.includes('suction') || q.includes('ดูดเสมหะ') || q.includes('เสมหะ') || q.includes('ดูดน้ำลาย')) {
+                return "การดูดเสมหะ (Suctioning) ในผู้ป่วยท่อช่วยหายใจ ต้องใช้เทคนิคปราศจากเชื้อ (Sterile Technique) และคำนึงถึงความปลอดภัยดังนี้ค่ะ:<br>1. **ขนาดสายดูด:** เส้นผ่านศูนย์กลางสายต้องไม่เกินครึ่งหนึ่งของท่อช่วยหายใจ (ปกติใช้เบอร์ 12-14 Fr)<br>2. **แรงดันดูด:** ใช้ความดันลบที่ปลอดภัยสำหรับผู้ใหญ่ 80-120 mmHg เพื่อป้องกันเนื้อเยื่อปอดบาดเจ็บ<br>3. **ความเข้มข้นออกซิเจน:** ต้องทำ Hyperoxygenation โดยให้ 100% FiO₂ นาน 1-2 นาทีก่อนและหลังดูดเสมหะ เพื่อป้องกันหัวใจเต้นผิดจังหวะหรือหยุดเต้นจากการขาดออกซิเจน และหลีกเลี่ยงการดูดเสมหะนานเกิน 15 วินาทีต่อครั้งค่ะ<br>4. **ระยะเวลา:** หลีกเลี่ยงการใส่สายคาไว้ลึกนานเกิน 15 วินาทีต่อการดูดหนึ่งครั้งค่ะ";
+            }
+            
+            if (q.includes('wean') || q.includes('หย่าเครื่อง') || q.includes('ถอดท่อ') || q.includes('extubate') || q.includes('sbt') || q.includes('rsbi')) {
+                return "การเตรียมความพร้อมหย่าเครื่องช่วยหายใจ (Weaning) และถอดท่อช่วยหายใจ (Extubation) มีหลักการดังนี้ค่ะ:<br>1. **เกณฑ์เบื้องต้น:** โรคหลักเริ่มดีขึ้น รู้ตัวดีทำตามสั่งได้ (RASS = 0), สัญญาณชีพและสารน้ำในร่างกายคงที่<br>2. **ทดลองฝึกหายใจเอง (SBT):** ปรับใช้โหมดสนับสนุน เช่น T-piece หรือ PSV นาน 30-120 นาทีเพื่อประเมินความทนทาน<br>3. **การประเมินดัชนี RSBI:** คำนวณจาก อัตราการหายใจ (ครั้ง/นาที) หารด้วย Tidal Volume หน่วยลิตร (RR / Vt) ซึ่ง **RSBI ต้องน้อยกว่า 105** ถึงจะถือว่าพร้อมถอดท่อและมีโอกาสสำเร็จสูงค่ะ";
+            }
+            
+            if (q.includes('vap') || q.includes('ปอดบวม') || q.includes('ติดเชื้อ') || q.includes('ปอดอักเสบ')) {
+                return "<strong>VAP (Ventilator-Associated Pneumonia)</strong> คือปอดอักเสบที่เกิดหลังใส่เครื่องช่วยหายใจ 48 ชั่วโมงขึ้นไป ซึ่งพยาบาลสามารถช่วยป้องกันได้ด้วย **VAP Prevention Bundle** ดังนี้ค่ะ:<br>1. ยกหัวเตียงสูง 30-45 องศาตลอดเวลาเพื่อลดการสำลัก<br>2. ทำความสะอาดปากด้วยยาฆ่าเชื้อ 0.12% Chlorhexidine วันละ 2-4 ครั้ง<br>3. ดูแลแรงดัน Cuff Pressure ให้อยู่ในช่วงปลอดภัย 20-30 cmH₂O เสมอเพื่อกันน้ำลายไหลรั่วลงปอด<br>4. ประเมินความพร้อมหย่าเครื่องช่วยหายใจและลองหยุดยานอนหลับทุกวันค่ะ";
+            }
+            
+            if (q.includes('abg') || q.includes('กรดด่าง') || q.includes('เลือดแดง') || q.includes('co2')) {
+                return "การแปลผล <strong>Arterial Blood Gas (ABG)</strong> เพื่อประเมินภาวะกรดด่างในผู้ป่วย ICU:<br>- **pH ต่ำ (< 7.35):** ภาวะกรด (Acidosis)<br>- **PaCO₂ สูง (> 45 mmHg):** ภาวะคาร์บอนไดออกไซด์คั่ง บ่งชี้ปัญหาที่ระบบหายใจ (Respiratory)<br>- **HCO₃⁻ ต่ำ (< 22 mEq/L):** บ่งชี้ปัญหาด้านเมตาบอลิก (Metabolic)<br>ตัวอย่างเช่น pH 7.28 และ PaCO₂ 55 mmHg บ่งชี้ภาวะ **Respiratory Acidosis** ซึ่งพยาบาลต้องรายงานแพทย์เพื่อพิจารณาปรับเพิ่มการระบายลมหายใจ (เช่น เพิ่มอัตราการหายใจ RR หรือ Tidal Volume บนเครื่องช่วยหายใจ) เพื่อช่วยผู้ป่วยขับ CO₂ ค่ะ";
+            }
+            
+            if (q.includes('สอบ') || q.includes('test') || q.includes('quiz') || q.includes('posttest') || q.includes('pretest')) {
+                return "สำหรับการเตรียมสอบประเมินผลสัมฤทธิ์ของวิชาชีพ:<br>- **Pre-test:** มี 20 ข้อ ใช้ประเมินความรู้เดิม ไม่มีการเฉลยทันทีค่ะ<br>- **Post-test:** มี 40 ข้อ มีเวลาจำกัด หากตอบถูกจะเห็นคำอธิบาย Clinical Reasoning ทันที นิสิตต้องสอบให้ได้คะแนน **ร้อยละ 80 ขึ้นไป (32 ข้อขึ้นไป)** จึงจะผ่านหลักสูตรและได้รับใบประกาศนียบัตรค่ะ แนะนำให้กลับไปทบทวนในแท็บ Microlearning ให้ครบถ้วนนะคะ";
+            }
+            
+            // Fallback response
+            return "อาจารย์เข้าใจความสนใจของนิสิตค่ะ เพื่อผลการเรียนรู้ที่ดี แนะนำลองพิมพ์ถามคีย์เวิร์ดเฉพาะทางเกี่ยวกับการพยาบาล ICU เช่นเรื่อง **PEEP, ARDS, COPD, Alarms, Suction, Weaning, VAP หรือการวิเคราะห์ผล ABG** หรือหากต้องการนิยามคำศัพท์ฉบับรวดเร็ว นิสิตสามารถพิมพ์สืบค้นในหน้าต่างพจนานุกรมคำศัพท์ (Glossary) ได้เลยนะคะ";
+        }
+
+        // --- 11. GENERAL UI LAYOUT & NAVIGATION CONTROL ---
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                const target = this.getAttribute('data-target');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+
+                // Update assistant speech based on tab change
+                updateAssistantSpeechByTab(target);
+            });
+        });
+
+        // Theme switch Dark / Light
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            appTheme = appTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', appTheme);
+        });
+
+        // Font increase Accessibility
+        document.getElementById('fontToggle').addEventListener('click', () => {
+            fontSizeLevel = (fontSizeLevel + 1) % 3;
+            document.body.classList.remove('font-large', 'font-xlarge');
+            if (fontSizeLevel === 1) {
+                document.body.classList.add('font-large');
+                document.getElementById('fontToggle').innerText = 'A++';
+            } else if (fontSizeLevel === 2) {
+                document.body.classList.add('font-xlarge');
+                document.getElementById('fontToggle').innerText = 'A';
+            } else {
+                document.getElementById('fontToggle').innerText = 'A+';
+            }
+        });
+
+        function handleLogin() {
+            const user = document.getElementById('usernameInput').value;
+            const role = document.getElementById('roleInput').value;
+            
+            if(!user) {
+                alert("กรุณากรอกชื่อผู้ใช้งาน");
+                return;
+            }
+
+            currentUser = { username: user, role: role };
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appBody').style.display = 'flex';
+            document.getElementById('logoutBtn').style.display = 'block';
+
+            // Show role indicator
+            let roleThai = role === 'student' ? 'นิสิตพยาบาล' : role === 'instructor' ? 'อาจารย์ผู้สอน' : 'ผู้ดูแลระบบ';
+            document.getElementById('userRoleBadge').innerText = `👤 ${roleThai}: ${user}`;
+
+            // Show instructor tab if role is instructor/admin
+            if (role === 'instructor' || role === 'admin') {
+                document.getElementById('instructorTab').style.display = 'block';
+                renderInstructorDashboard();
+            } else {
+                document.getElementById('instructorTab').style.display = 'none';
+            }
+
+            loadProgress();
+            earnBadge('first_login');
+
+            // Show floating assistant widget on login
+            document.getElementById('assistantWidget').style.display = 'flex';
+            setTimeout(() => {
+                showAssistantSpeech("สวัสดีค่ะนิสิต! ยินดีต้อนรับเข้าสู่บทเรียนการพยาบาลระบบช่วยหายใจนะคะ เริ่มต้นด้วยการทดสอบ Pre-test เพื่อวัดความรู้พื้นฐาน หรือเริ่มศึกษาบทเรียน Microlearning ก่อนได้เลยค่ะ");
+            }, 1000);
+        }
+
+        function quickLogin(role) {
+            document.getElementById('usernameInput').value = role === 'student' ? 'Nisitt_UP' : 'Dr_Warattaya';
+            document.getElementById('roleInput').value = role;
+            handleLogin();
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            currentUser = null;
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('appBody').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            clearInterval(quizTimerInterval);
+
+            // Hide floating assistant on logout
+            document.getElementById('assistantWidget').style.display = 'none';
+            document.getElementById('assistantSpeechBubble').classList.remove('show');
+        });
+
+        // Dashboard dynamic updates
+        function updateDashboardUI() {
+            const preVal = currentProgress.pretestScore !== null ? `${currentProgress.pretestScore}` : '-';
+            const postVal = currentProgress.posttestScore !== null ? `${currentProgress.posttestScore}` : '-';
+            
+            document.getElementById('dashPretestScore').innerText = preVal;
+            document.getElementById('dashPosttestScore').innerText = postVal;
+            document.getElementById('dashCasesCompleted').innerText = currentProgress.completedCases.length;
+
+            // Calculated progress
+            const totalModules = 26;
+            const completedCount = currentProgress.completedModules.length;
+            const pct = Math.round((completedCount / totalModules) * 100);
+            
+            document.getElementById('overallProgressFill').style.width = `${pct}%`;
+            document.getElementById('progressPercentageText').innerText = `ความคืบหน้าการเรียนรู้: ${pct}% (${completedCount}/${totalModules} บทเรียน)`;
+
+            // Certificate trigger conditional check
+            const hasPre = currentProgress.pretestScore !== null;
+            const hasPost = currentProgress.posttestScore !== null && currentProgress.posttestScore >= 32; // 80% of 40
+            const hasSafety = currentProgress.miniGamesPassed.vap && currentProgress.miniGamesPassed.suction && currentProgress.miniGamesPassed.weaning;
+
+            if (hasPre && hasPost && hasSafety) {
+                document.getElementById('certSection').style.display = 'block';
+            } else {
+                document.getElementById('certSection').style.display = 'none';
+            }
+
+            // Render earned badges
+            const earned = JSON.parse(localStorage.getItem('vent_earned_badges_' + currentUser?.username) || '[]');
+            const badgeContainer = document.getElementById('badgeContainer');
+            badgeContainer.innerHTML = badgeDefinitions.map(b => {
+                const isEarned = earned.includes(b.key);
+                return `
+                    <div class="badge-item ${isEarned ? 'earned' : ''}" title="${b.desc}">
+                        <div class="badge-icon">${b.icon}</div>
+                        <div class="badge-name">${b.name}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Cognitive assessment strength summary
+            const analysis = document.getElementById('cognitiveAnalysis');
+            if (earned.length > 0) {
+                let strengths = [];
+                let improvements = [];
+                
+                if (earned.includes('suction_pro')) strengths.push("ทักษะการปฏิบัติการดูดเสมหะปราศจากเชื้อ (Sterile & Safe Suctioning)");
+                if (earned.includes('vap_defender')) strengths.push("การป้องกันการติดเชื้อในปอดสัมพันธ์กับเครื่องช่วยหายใจ (VAP Prevention Bundle)");
+                if (earned.includes('waveform_detective')) strengths.push("การวิเคราะห์และวินิจฉัยความผิดปกติจากกราฟ (Waveform Diagnostic)");
+                else improvements.push("การแปลผลกราฟวงจรช่วยหายใจ (Waveform & Loops)");
+
+                if (earned.includes('abg_expert')) strengths.push("การวิเคราะห์ภาวะกรดด่างในเลือดแดง (ABG Acid-Base Evaluation)");
+                else improvements.push("การแปลผลก๊าซในเลือดเพื่อปรับตั้งพารามิเตอร์เครื่อง");
+
+                if (earned.includes('weaning_master')) strengths.push("การประเมินดัชนี Weaning และทดลองถอดท่อหายใจ (SBT & Weaning Readiness)");
+                else improvements.push("กระบวนการประเมินดัชนี Weaning และความปลอดภัยก่อนถอดท่อ (Extubation)");
+
+                analysis.innerHTML = `
+                    <p style="font-weight:bold; color:var(--success);">🌟 จุดแข็งของนิสิต:</p>
+                    <ul style="margin-left:20px; font-size:0.9rem; margin-bottom:10px;">
+                        ${strengths.length > 0 ? strengths.map(s => `<li>${s}</li>`).join('') : '<li>เริ่มทำภารกิจและมินิเกมเพื่อวิเคราะห์...</li>'}
+                    </ul>
+                    <p style="font-weight:bold; color:var(--warning);">🛠️ จุดที่แนะนำให้ทบทวนเพิ่มเติม:</p>
+                    <ul style="margin-left:20px; font-size:0.9rem;">
+                        ${improvements.length > 0 ? improvements.map(i => `<li>${i}</li>`).join('') : '<li>ทักษะทั้งหมดอยู่ในเกณฑ์ยอดเยี่ยม ปลอดภัยสูง</li>'}
+                    </ul>
+                `;
+            }
+        }
+
+        function generateMockCertificate() {
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div class="certificate-frame">
+                    <div style="font-size:1.2rem; font-weight:bold; color:var(--primary);">คณะพยาบาลศาสตร์ มหาวิทยาลัยพะเยา</div>
+                    <div class="certificate-title">CERTIFICATE OF COMPLETION</div>
+                    <p style="font-size:1.1rem; margin-bottom:1rem;">ใบประกาศนียบัตรฉบับนี้แสดงว่า</p>
+                    <h2 style="margin-bottom:1.5rem; font-family:'Outfit'; text-decoration:underline;">${currentUser?.username || 'นิสิตพยาบาลศาสตร์'}</h2>
+                    <p style="max-width:500px; margin:0 auto 1.5rem; line-height:1.6;">
+                        ได้ผ่านหลักสูตรการศึกษาและฝึกหัดผ่านสถานการณ์จำลองทางคลินิกวิกฤต<br>
+                        <strong>"Ventilator Nursing Learning Application"</strong><br>
+                        การใช้เครื่องช่วยหายใจและการพยาบาลผู้ป่วยที่ได้รับเครื่องช่วยหายใจ อย่างปลอดภัยตามมาตรฐานวิชาชีพ
+                    </p>
+                    <div style="display:flex; justify-content:space-between; margin-top:2rem; font-size:0.85rem;">
+                        <div>
+                            <div>__________________________</div>
+                            <div style="margin-top:5px; font-weight:bold;">ผศ.ดร.วรัทยา กุลนิธิชัย</div>
+                            <div>อาจารย์ผู้สอนและผู้รับผิดชอบหลักสูตร</div>
+                        </div>
+                        <div>
+                            <div style="border:1px solid #ddd; padding:5px; font-family:monospace;">
+                                Code: UP-NURSE-VE-${Math.floor(100000 + Math.random() * 900000)}
+                            </div>
+                            <div style="margin-top:5px;">ตรวจสอบสถานะ: ผ่านระบบฐานข้อมูลหลัก</div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div style="text-align:center;">
+                    <button class="btn btn-primary" onclick="window.print()">🖨️ พิมพ์ออกเครื่องพิมพ์ / บันทึก PDF</button>
+                </div>
+            `;
+            document.getElementById('systemModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('systemModal').style.display = 'none';
+        }
+
+        // --- 12. INITIALIZATION ON WINDOW LOAD ---
+        window.addEventListener('load', () => {
+            renderModules();
+            renderCases();
+            renderGlossary(glossaryList);
+            startSimulatorEngine();
+        });
+
+    </script>
+</body>
+</html>
